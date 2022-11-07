@@ -1,0 +1,219 @@
+---
+title: "TeamViewer Quick Start"
+jupyter: python3
+---
+
+The purpose of this brief document is to help students start TeamViewer, launch
+a meeting, and remotely control lab computers. Where helpful, screenshots are
+included.
+
+Two important caveats:
+
+- This document is intended to be printed on hardcopy, to best assist students
+  who are completely unfamiliar with TeamViewer. It should be as short as
+  possible.
+
+- This document illustrates use on Windows 10. However, the instructions should
+  be applicable to Mac OS X and Linux platforms as well.
+
+## Overview of TeamViewer
+
+TeamViewer is an intuitive, fast and secure application for remote control and
+meetings. As an all-in-one solution, TeamViewer can be used to:
+
+- Provide ad-hoc remote support to colleagues, friends or customers.
+- Administer Windows servers and workstations. You can run TeamViewer as a
+  Windows system service. This allows you to access your computer even before
+  you log into Windows.
+- Connect to other platforms such as Mac OS X and Linux.
+- Share your desktop for meetings, presentations or team work.
+
+TeamViewer works behind firewall barriers, NAT routers and proxies with no
+configuration necessary.
+
+## Starting TeamViewer
+
+To download TeamViewer, follow these steps:
+
+1. Point your web browser to the link
+   [https://www.teamviewer.com/en-us/.](https://www.teamviewer.com/en-us/.)
+
+2. Select the appropriate Operating System for your computer, and click
+   "Download for free".
+
+3. Double click the downloaded installer package to install the application on
+   your computer.
+
+Once the application is installed, you can launch it just like any other
+application on your computer.
+
+## Meetings
+
+### Host a Meeting
+
+To host a meeting, follow these steps:
+
+1. Start TeamViewer.
+
+2. Click the Meeting tab.
+
+3. Click "Video" under "Host Meeting".
+
+At this point, the instant call window will open.
+
+4. Click "+ Call" and then click "Click to clipboard".
+
+5. Send the message to your meeting participants.
+
+6. To end the meeting, you can either click the red cross icon in the instant
+   call window if you have it, or click the cross icon in the sidebar.
+
+### Join a Meeting via a Link
+
+To join a meeting, follow these steps:
+
+1. Ask a partner or the TA for the meeting link and start your TeamViewer.
+
+2. Click the link.
+
+A TeamViewer website will open.
+
+3. Click Open TeamViewer.
+
+Then you should see yourself in the meeting if your camera is connected;
+otherwise, click Cancel if you don't have a camera.
+
+4. Move mouse to your video, there should be a microphone icon, a video icon and
+   an audio icon. Check their status so that your audio is unmuted. If you are
+   muted, click the icon to revert the status.
+
+5. To end the meeting, you can either click the red cross icon in the instant
+   call window if you have it, or click the cross icon in the sidebar.
+
+### Share Screen in a Meeting
+
+While you are in the meeting, follow these steps:
+
+1. Click Share screen in the meeting window. You may need to authorize
+   TeamViewer in this process.
+
+2. In the sidebar of TeamViewer, click the setting icon under Screen sharing
+   tab.
+
+3. Click Quality then click Optimize speed. You can choose other settings if you
+   want.
+
+4. In the sidebar of TeamViewer, click Presenting screen or Select application
+   to change the range of screen you would like to share.
+
+5. Click the setting icon under Screen sharing tab agian and then click Close
+   Screen Sharing to stop screen sharing.
+
+### Chat in a Meeting
+
+While you are in the meeting, you could either click the chat icon in the
+sidebar of Teamviewer or click the chat icon in the instant call window to start
+a chat with others in the meeting.
+
+### Transfer Files in a Meeting
+
+While you are in the meeting, you could either click the File Box in the sidebar
+of TeamViewer and drop files to share or click the file icon in the instant call
+window to transfer files.
+
+## Remote Control
+
+### Establish Remote Control
+
+To establish remote control of the computers in lab, follow these steps:
+
+1. Start TeamViewer.
+
+2. Click the "Remote Control" tab.
+
+3. Ask TA to start TeamViewer on the remote devices in the lab.
+
+4. Ask TA for the TeamViewer ID and passwords for the TX and RX computers.
+
+5. Enter TX's ID in the Partner ID combo box.
+
+6. Click the "Remote control" option button.
+
+7. Click the "Connect" button.
+
+The TeamViewer Authentication dialog box will open.
+
+8. Enter the password of the remote computer.
+
+9. Click Log On.
+
+10. You are now connected to TX’s computer.
+
+If you want to connect to both TX and RX computers at the same time,
+
+11. Return back to the Remote Control tab while keep your TX remote control
+    window open.
+
+12. Enter RX's ID in the Partner ID combo box.
+
+13. Click the "Remote control" option button.
+
+14. Click the "Connect" button.
+
+The TeamViewer Authentication dialog box will open.
+
+15. Enter the password of the remote computer.
+
+16. Click Log On.
+
+17. You are now connected to RX’s computer too.
+
+18. To end connection, close the window.
+
+### Control the Computers
+
+Once you have connected to both TX and RX computers, you are able to control
+those computers as you are in the lab.
+
+#### Key shortcuts
+
+Some key shortcuts might not be the same as in lab. Here are some useful key
+shortcuts that might work under remote control.
+
+| Effect | macOS/Windows |
+| :----: | :-----------: |
+|  copy  |   `ctrl+c`    |
+| paste  |   `ctrl+v`    |
+|  save  |   `ctrl+s`    |
+
+Note: First, you need to check "Send key combinations" is enabled. Access the
+toolbar located at the top of the screen; Select "Actions" tab and under the
+"Remote Interaction" section, you should be able to check the box for "Send key
+combinations".By doing so, you will be able to execute commands mentioned in
+your post on the remote computer.
+
+Another important hotkey ctrl+break might not be available in remote keyboard
+entries. We can still use On-Screen Keyboard to control. At the bottom bar, type
+osk in the search section and open On-Screen Keyboard. In On-Screen Keyboard,
+hold Ctrl or Fn and click Pause or hold Ctrl and click Scrlk to simulate Break.
+This method also applies to other hotkeys which are not available in remote
+control mode.
+
+#### Display
+
+In the remote control window, access the toolbar located at the top of the
+screen, select "View" to change the quality, scaling and screen resolution. On
+Windows machine, you are able to change the screen to full screen if you want.
+
+#### File transfer
+
+In the remote control windown, access the toolbar located at the top of the
+screen, click the file icon and select "File Transfer". A file transfer window
+will open. Select the desired directories for the two computers and you could
+draw your desired files from local computer to remote computer or from remote
+computer to local computer.
+
+## References
+
+1. How to Use TeamViewer: <br>
+   [https://www.teamviewer.com/en-us/documents/](https://www.teamviewer.com/en-us/documents/)

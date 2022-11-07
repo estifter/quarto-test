@@ -1,0 +1,312 @@
+---
+title: "Lecture 21 - Thermal Noise"
+jupyter: python3
+---
+
+
+## Summary
+
+In this lecture, we will develop thermal noise models for receive circuits.
+
+## Motivation in Course Context
+
+In our radio circuits, particularly in the receive circuitry, we will need to account for the fact that components with resistive elements exhibit *thermal noise*. The high-level concept is illustrated in the figure below.
+
+![01](images/Lec21-01.png)
+
+An ideal resistor when shorted exhibits zero voltage drop. However, a real resistor when shorted exhibits a random voltage drop associated with vibrations of the molecules in the resistor. We treat the voltage source $w(t)$ as a *random process* to deal with uncertainty.
+
+Real resistances arises in the antennas, transmission lines, transistor gates, and other circuit components in the receiver, and we need to develop models for the noise and circuit and algorithm designs to reduce its impact on link performance.
+
+## Outline
+
+* Random Process Model
+* Thermal Noise in the Time Domain
+* Thermal Noise in the Frequency Domain
+* Bandlimited Thermal Noise
+* Signal-to-Noise Ratio
+
+## Random Process Model
+
+Some signals are modeled as *random processes* because they exhibit significant uncertainty. In particular, if we were to short a real resistor and measure the voltage across it for two distinct periods of time, even under the most controlled settings the two voltage signals would be unequal almost everywhere! For an ideal resistor, the voltages would be identically zero for both periods.
+
+**TBD Insert diagram of two noise waveforms measured in lab.**
+
+### Time and Ensemble Domains
+
+To address uncertainty, we characterize statistical behavior of the random signal averaged over extremely long periods of time or over many, many measurements. 
+Fortunately, for many random signals of interest, these two characterizations are consistent with each other.
+
+More specifically, we utilize **two variables** to define a random signal, a time variable $t\in\mathbb{R}$ and a measurement variable $\omega \in \Omega$.
+
+* The set $\Omega$ captures all possible outcomes of the measurements, in this case all possible measured waveforms, each as a function of time $t\in\mathbb{R}$. In the general theory of probility and random processes, $\Omega$ is called the *sample space* or *ensemble*.
+
+* For each fixed $\omega_0 \in \Omega$, the measurement $w(t,\omega_0)$ is a conventional signal waveform.
+
+* For each fixed $t_0\in\mathbb{R}$, the measurement $w(t_0,\omega)$ is a random variable on the sample space $\Omega$.
+
+* For simplicity of notation, we often drop the dependence upon $\omega$ when it is clear from the context that the signal is modeled as a random process and would not otherwise cause confusion.
+
+### Time, Ensemble, and Sample Averages
+
+Consider a random process $x(t,\omega)$, $t\in\mathbb{R}$, $\omega\in\Omega$ and function $g(x)$, $x\in\mathbb{R}$ that represents a quantity we may want to measure or compute related to the process.
+
+For a given measurement $\omega_0 \in \Omega$, we can compute the *time-average value* of $g(x(t,\omega_0))$ as
+
+$$
+  \overline{g(x(t,\omega_0))} := \lim_{T\rightarrow \infty} \frac{1}{T} \int_{-T/2}^{+T/2} g(x(t,\omega_0)) dt
+$$
+
+Since $\overline{g(x(t,\omega_0)}$ is a function of the sample space, it is in general a random variable.
+
+On the other hand, for a given time $t_0 \in \mathbb{R}$, we can compute the *ensemble average value* of $g(x(t_0,\omega))$ as
+
+$$
+  \mathbb{E}\left[g(x(t_0,\omega))\right]:= \int_{-\infty}^{\infty} g(x) f_{t_0}(x) dx
+$$
+
+where $f_{t_0}(x)$ represents the proability density function of the random variable $x(t_0,\omega)$, $\omega\in\Omega$. Since $\mathbb{E}\left[g(x(t_0,\omega)\right]$ can be a function of time, it is in general a waveform. The ensemble average is also called the *expectation* or *expected value* in various contexts.
+
+For the important class of *stationary* and *ergodic* processes, it turns out that $\overline{g(x(t,\omega_0))}$ and $\mathbb{E}\left[g(x(t_0,\omega))\right]$ are **the same**, the former taking the value with probabilty one, i.e., almost all $\omega \in \Omega$, and the latter taking the value for all values of time $t_0 \in\mathbb{R}$.
+
+Finally, either of the above quantities can be estimated or computed via *sample averages*. In particular, if we obtain a given measurement $\omega_0 \in \Omega$ at times $t_1,t_2,\ldots,t_N\in\mathbb{R}$, $N\in\mathbb{Z}^+$, then we expect
+
+$$
+  \frac{1}{N} \sum_{n=1}^{N} g(x(t_n,\omega_0)) \rightarrow \overline{g(x(t,\omega_0)}
+$$
+
+as $N\rightarrow \infty$. Similarly, for a given $t_0 \in\mathbb{R}$, if we obtain multiple measurements $\omega_1,\omega_2,\ldots,\omega_N\in\Omega$, $N\in\mathbb{Z}^+$, then we expect
+
+$$
+  \frac{1}{N} \sum_{n=1}^{N} g(x(t_0,\omega_n)) \rightarrow \mathbb{E}\left[g(x(t_0,\omega))\right]
+$$
+
+as $N\rightarrow \infty$.
+
+Subtle details about the notions of convergence for sequences of random variables and random processes are left for more advanced courses.
+
+## Thermal Noise in the Time Domain
+
+With the random process concepts and notation in place, we can now summarize some important properties of thermal noise.
+
+### Average Value
+
+To begin, thermal noise has the property that time and ensemble average values of the signal are zero. Specifically,
+
+$$
+  \overline{w(t,\omega))}=0
+$$
+
+with probability one, i.e., almost all $\omega\in\Omega$, and
+
+$$
+  \mathbb{E}\left[w(t,\omega)\right]=0,\ t\in\mathbb{R}.
+$$
+
+### Correlation
+
+Next, if we compute the long-term correlation of the thermal noise with a delayed version of itself, we obtain zero, except for extraordinarily small delays. Specifically, we can define the time average correlation function
+
+$$
+  \overline{w(t+\tau,\omega)w^*(t,\omega)} := \lim_{T \rightarrow \infty} \frac{1}{T} \int_{-T/2}^{T/2} w(t+\tau,\omega)w^*(t,\omega) dt
+$$
+
+and find that it is zero for $|\tau| > \varepsilon$ and almost all $\omega \in \Omega$, i.e., with probability one. Note that we have allowed for complex-valued noise sources for generality.
+
+Similarly, we can define the ensemble average correlation function
+
+$$
+  R_w(t,\tau):=\mathbb{E}\left[w(t+\tau,\omega)w^*(t,\omega)\right]=\int_{-\infty}^{\infty} \int_{-\infty}^{\infty} w_1 w^*_2 f_{t+\tau,t}(w_1,w_2) dw_1 dw_2
+$$
+
+and find that it is zero for $|\tau| > \varepsilon $, where $f_{t+\tau,t}(w_1,w_2)$ denotes the joint probability density function for the random variables $w(t+\tau,\omega)$ and $w(t,\omega)$.
+
+For the important class of stationary and ergodic processes, we have
+
+$$
+  \overline{w(t+\tau,\omega)w^*(t,\omega)} = R_w(t,\tau)=R_w(0,\tau)
+$$
+
+with probability one, and this function only depends upon $\tau$ not $t$.
+
+As we will explain later $\varepsilon$ is of the order of picoseconds, which is extremely challenging to measure anyway. So we can approximately say that the correlation function is zero except for $\tau = 0$, which we address next.
+
+### Average Power
+
+Finally, the average power of the noise signal $P_w$ is non-zero, and corresponds to the correlatons for $\tau = 0$, either the time average $\overline{|w(t,\omega)|^2}$ for almost all $\omega\in\Omega$, i.e., with probability one, or the ensemble average $\mathbb{E}\left[|w(t,\omega)|^2\right]$ for all $t\in\mathbb{R}$.
+
+##  Random Processes in the Frequency Domain
+
+### Spectrum Analyzer
+
+A spectrum analyzer is a device used to measure average signal power as a function of frequency. The operation of a spectrum analyzer can be modeled as shown in the figure below, with the idea being that $\epsilon$ is small and $T$ is large.
+
+![02](images/Lec21-02.png)
+
+The first block is a complex-valued bandpass filter centered at frequecny $f_0$ with squared magnitude response
+
+$$
+  |H_{f_0,\epsilon}(f)|^2 =
+\begin{cases}
+\frac{1}{\epsilon} & |f-f_0| < \frac{\epsilon}{2} \\
+0 & \textrm{otherwise}
+\end{cases}
+$$
+
+We note that the impulse response of such a filter is complex-valued because the frequency response is not Hermitian symmetric.
+
+### Power Spectral Density
+
+It is convenient to define the *power spectral density (PSD)* as the limit
+
+$$
+  S_w(f) := \lim_{\epsilon \rightarrow 0} \lim_{T\rightarrow \infty} S_w(f,\epsilon,T)
+$$
+
+If $w(t)$ is a deterministic signal with Fourier transform $W(f)$, then $S_w(f_0,\epsilon,T)$ is just a real number, and
+
+$$
+  \lim_{\epsilon \rightarrow 0} \lim_{T\rightarrow \infty} S_w(f_0,\epsilon,T) = |W(f_0)|^2
+$$
+
+If $w(t)$ is a random process, then $S_w(f_0,\epsilon,T)$ is a random variable for each $f_0$. For many relevant random process models that satisfy the properties of being stationary and ergodic, $S_w(f)$ is a well-defined, real-number for $f\in\mathbb{R}$.
+
+Several comments are in order:
+
+* The total average power in the signal is the integral of the PSD
+
+$$
+  P_w = \int_{-\infty}^{\infty} S_w(f) df
+$$
+
+Thus, the PSD represents the power density in the infinitesmal interval of length $df$ centered at $f$.
+
+* If $y(t)$ is a filtered version of $w(t)$, i.e,. $y(t)=g(t)*w(t)$ for some determinstic impulse response $g(t)\leftrightarrow G(f)$, then
+
+$$
+  S_y(f) = |G(f)|^2 S_w(f)
+$$
+
+Thus, only the magnitude response and not the phase response of the filter $G(f)$ affects the PSD.
+
+* In practice, we measure $S_w(f,\epsilon,T)$ as a noisy approximation to $S_w(f)$ for $\epsilon$ small and $T$ large.
+
+* The power spectral density is the (generalized) Fourier transform of the autocorrelation function, i.e.,
+
+$$
+  S_w(f) = \int_{-\infty}^{+\infty} R_w(0,\tau)\, e^{-j2\pi f \tau} d\tau
+$$
+
+## Thermal Noise in the Frequency Domain
+
+Experiments (Johnson, 1928) and theory (Nyquist, 1928) suggest that the thermal noise in a real resistor can be modeled as a zero-mean Gaussian random process with PSD satisfying
+
+$$
+  S_w(f) = \frac{4hfR}{e^{hf/kT}-1}
+$$
+
+where:
+
+* $R\ \mathrm{Ohms}$ is the resistance
+
+* $h=6.6\times 10^{-34}\ \mathrm{J\cdot s}$ is Planck's constant
+
+* $k=1.38\times 10^{-23}\ \mathrm{J/K}$ is Boltzman's constant
+
+* $T$ is temperature in Kelvin
+
+Now, if we expand the denominator in a Taylor series about $f=0$, we have
+
+$$
+  e^{hf/kT}-1 = \frac{h}{kT} f + \frac{1}{2} \left(\frac{h}{kT}\right)^2 f^2 + \cdots
+$$
+
+The first term dominates if $f \ll kT/h$. In this case,
+
+$$
+  S_w(f)\simeq 4 k T R
+$$
+
+i.e., the noise PSD is roughly **flat as a function of frequency**. With such an approximation, the autocorrelation function is approximately $R_w(0,\tau) = 4kTR \delta(\tau)$.
+
+At room temperature ($T\simeq 300\ \mathrm{K}$), the upper limit for this approximation is about $6\ \mathrm{THz}$. This bandwidth suggests that the autocorrelation function $R_w(0,\tau)$ decays to zero for $\tau$ on the other of picoseconds, as mentioned earlier.
+
+As we will see later, the power dissipated by this noise source in a matched load will be $kT$ per Hz. At room temperature ($T\simeq 300\ \mathrm{K}$), this quantity is often expressed as
+
+$$
+  10\log_{10}(kT \times 1000)\ \mathrm{dBm/Hz}=10\log_{10}(1.38\times 10^{-23}\ \mathrm{J/K} \times 300\ \mathrm{K} \times 1000)\simeq -174\ \mathrm{dBm/Hz}
+$$
+
+## Bandlimited Thermal Noise
+
+Suppose that we filter thermal noise with an ideal bandpass filter as shown in the figure below, with $B \ll kT / h$ so that the input noise PSD is flat over the frequencies of interest.
+
+![03](images/Lec21-03.png)
+
+The total average power in the output noise $w_B(t)$ will be
+
+$$
+  P_{w_B} = \int_{-B/2}^{B/2} S_w(f)\ df = 4kTRB
+$$
+
+i.e., **the total average noise power is proportional to the bandwidth**.
+
+By applying the sampling theorem, we can represent $w_B(t)$ by its samples $w[n]=w(nT_s)$ with sampling period $T_s=1/(2B)$, i.e.,
+
+$$
+  w_B(t) = \mathrm{l.i.m.}_{N\rightarrow\infty} \sum_{n=-N}^{+N} w[n]\ \mathrm{sinc}\left(\frac{t-nT_s}{T_s} \right)
+$$
+
+Since $w_B(t)$, $t\in\mathbb{R}$ is a random process, the sequence $w[n]$, $n\in\mathbb{Z}$ is a sequence of random variables. It turns out that these random variables are zero-mean, independent Gaussian random variables with variance $P_{w_B}$. Thus, we have
+
+$$
+  w[n] \sim N(0,4kTRB)
+$$
+
+This allows us to model noise processes in the computer, as we will address in a followup lecture.
+
+## Signal-to-Noise Ratio
+
+Now suppose that we have a voltage source $s(t)$ with a source resistance $R_s$ driving a load resistance $R_l$. We assume for simplicity that any reactances have been matched out. Both the source and load resistances are in thermal equilibrium and exhibit thermal noise sources $w_s(t)$ and $w_l(t)$, which would be independent and uncorrelated noise sources.
+
+![04](images/Lec21-04.png)
+
+If the input signal voltage is bandlimited with power
+
+$$
+  P_s = \int_{-B/2}^{+B/2} S_s(f) df
+$$
+
+the source signal $s(t)$ dissipates power
+
+$$
+  \left( \sqrt{P_s} \frac{R_l}{R_s+R_l} \right)^2 R_l^{-1} = P_s \frac{R_l}{(R_s+R_l)^2} \le \frac{P_s}{4\, R_s}
+$$
+
+in the load resistance $R_l$. The inequality is achieved for $R_l = R_s$.
+
+In the same bandwidth, the source resistance thermal noise source $w_s(t)$ dissipates power
+
+$$
+  \left( \sqrt{4 k T R_s B} \frac{R_l}{R_s+R_l}\right)^2 R_l^{-1} = (4 k T B) \frac{R_s\cdot R_l}{(R_s+R_l)^2} \le k T B
+$$
+
+in the load resistance $R_l$, and similarly, the load resistance thermal noise source $w_l(t)$ dissipates power
+
+$$
+  \left( \sqrt{4 k T R_l B} \frac{R_s}{R_s+R_l}\right)^2 R_s^{-1} = (4 k T B) \frac{R_s\cdot R_l}{(R_s+R_l)^2} \le k T B
+$$
+
+Thus, the two resistors are in thermal equilibrium and dissipate the same amount of power in each other. We do not consider that the source termal noise dissipates power in the source resistor, or that the load thermal noise  dissipates power in the load resistor. The inequalities in each case are achieved by $R_l = R_s$.
+
+The *signal-to-noise ratio (SNR)* in the load resistance over the frequency band is then
+
+$$
+  \mathrm{SNR} := \frac{P_s}{4 k T R_s B} = \frac{\int_{-B}^{+B} S_s(f) df}{\int_{-B}^{+B} S_{w_s}(f) df}
+$$
+
+## References
+
+1. Henry W. Ott, *Noise Reduction Techniques in Electronic Systems*, 2nd Edition, John Wiley & Sons, 1988.
+
+2. Behzad Razavi, *RF Microelectronics*, 2nd Edition, Prentice Hall, 2011.

@@ -1,0 +1,193 @@
+---
+title: "Syllabus"
+jupyter: python3
+---
+
+EE-40453 and EE-41453 are the lecture and lab course numbers, respectively, for
+_Digital Radio Communication Systems_, a junior / senior elective course offered
+in the Department of Electrical Engineering at the University of Notre Dame. The
+latest offering of this course in Spring 2022.
+
+---
+
+| Role               | Name                | Office               | Email                                       | Photo                             |
+| :----------------- | :------------------ | :------------------- | :------------------------------------------ | :-------------------------------- |
+| Instructor, PI     | J. Nicholas Laneman | 264 Fitzpatrick Hall | [jnl@nd.edu](mailto:jnl@nd.edu)             | ![Laneman](images/laneman.jpeg)   |
+| Advisor, Co-PI     | Bertrand Hochwald   | 203B Cushing Hall    | [bhochwald@nd.edu](mailto:bhochwald@nd.edu) | ![Hochwald](images/hochwald.jpeg) |
+| Advisor, Co-PI     | Jonathan Chisum     | 226A Cushing Hall    | [jchisum@nd.edu](mailto:jchisum@nd.edu)     | ![Chisum](images/chisum.jpeg)     |
+| Engineering Staff  | Clint Manning       | 253B Cushing Hall    | [cmanning@nd.edu](mailto:cmanning@nd.edu)   | ![Manning](images/manning.jpeg)   |
+| Teaching Assistant | Omkar Mujumdar      | 250 Cushing Hall     | [omujumda@nd.edu](mailto:omujumda@nd.edu)   | ![Mujumdar](images/mujumdar.jpeg) |
+| Teaching Assistant | Guoyue Xu           | 250 Cushing Hall     | [gxu3@nd.edu](mailto:gxu3@nd.edu)           | ![Xu](images/xu.jpeg)             |
+
+## Meetings
+
+Lecture days and times will be:
+
+- _Lectures:_ Mondays, Wednesdays, & Fridays, 12:50-1:40pm, 105 Pasquerilla
+  Center
+
+Lab Section days and times will be:
+
+- _Lab Section 1:_ Mondays, 3:30-6:30pm, 116 Cushing Hall
+
+- _Lab Section 2:_ Thursdays, 3:30-6:30pm, 116 Cushing Hall
+
+Meetings work best (and are most fun) when they are highly interactive, so your
+participation is important and strongly encouraged. Remember that asking
+questions - whether in class or lab - is a sign of engagement in the material,
+not an expression of weakness!
+
+## Office Hours
+
+The instructor will not schedule formal office hours, but will be available
+immediately before or after lecture and at the start of lab sections to address
+student questions on all aspects of the course.
+
+The engineering staff and teaching assistant will be very available during lab
+sections to assist students with lab work and address broader questions about
+homework and other technical course content.
+
+Please bear in mind that the instruction staff have many other responsibilities,
+so try to make the most of these built-in opportunities for interaction.
+
+If an issue cannot be adequately addressed at the above times, or if you need
+additional help, we may be able to briefly meet with you individually; send us
+e-mail to try to schedule an appointment, or feel free to drop by our offices
+whenever the door is open.
+
+## Course & Reference Materials
+
+The course development and instruction team will be preparing lecture notes,
+homework and quiz problems, and labs exercises that will be distributed at the
+appropriate times. Together with an evolving educational radio kit for
+laboratory exercises, we have started to refer to all these materials as
+_RadioWare_. Your careful review of, feedback on, and even contribution to these
+materials will be very appreciated.
+
+The required textbook for the course is:
+
+- Michael Rice, _Digital Communications: A Discrete-Time Approach_, Second
+  Edition, Self Published, 2020. Available from Amazon at
+  [https://www.amazon.com/dp/B08GVGCKCC](https://www.amazon.com/dp/B08GVGCKCC)
+
+Furthermore, there are several recommended reference texts from which may we
+select some content and exercises:
+
+- Travis F. Collins, Robin Getz, Di Pu, and Alexander M. Wyglinski,
+  _Software-Defined Radio for Engineers_, Artech House, 2018. Available online
+  at
+  [https://www.analog.com/en/education/education-library/software-defined-radio-for-engineers.html](https://www.analog.com/en/education/education-library/software-defined-radio-for-engineers.html)
+- David L. Adamy, _Introduction to Electronic Warfare Modeling and Simulation_,
+  SciTech Publishing, 2006. Available online at
+  [https://app.knovel.com/hotlink/toc/id:kpIEWMS004/introduction-electronic/introduction-electronic](https://app.knovel.com/hotlink/toc/id:kpIEWMS004/introduction-electronic/introduction-electronic)
+
+## Homework
+
+Homework will consist of problem sets and lab reports, each described in further
+detail below. You are expected to complete all assigned homework problems and
+lab exercises, though a randomly chosen subset will likely be graded.
+
+Although the grade you get on your homework is only one component of your course
+grade, working through, and often struggling at length with, the problem sets
+and lab exercises is a crucial part of the learning process and will invariably
+have a major impact on your understanding of the material. This understanding
+will, in turn, be reflected in your exam performance and overall course grade.
+
+Some items in the problem sets and lab execises may be labeled as "Optional".
+You can make use of these items if you feel you might benefit from some
+additional exposure to the material or if you are simply interested. Optional
+items we will not be graded, but we will provide solutions to them along with
+those for the regular problems.
+
+### Problem Sets
+
+There will be problem sets approximately every week.
+
+We expect to issue problem sets Mondays and have them due a week and a half
+later on Wednesdays at the end of class. Solutions will be distributed at the
+end of the due date’s lecture; consequently, late problem sets cannot be
+seriously evaluated.
+
+Moderate collaboration with one or two classmates is permitted, provided your
+writeups are your own.
+
+### Lab Exercises & Reports
+
+Laboratory work will serve as an important reinforcement and extension of topics
+covered in lectures.
+
+The lab exercises aim to familiarize students with practical issues in building
+and testing radio communication systems, including the areas of analog and
+digital hardware, software programming, measurements, and technical
+documentation.
+
+Lab exercises will primarily be worked during lab sections, but students will be
+able to access the equipment outside of lab sections subject to coordination
+with the instruction team.
+
+Lab work will be conducted in teams of 2 students, but lab reports should be
+written up separately.
+
+## Quizzes & Exam
+
+### Concept Quizzes
+
+At the end of each learning module, we will have an short, in-class "concept
+quiz" to check understanding and provide feedback to the instruction team.
+
+We expect learning modules to collect related topics and last about 3 weeks, on
+average.
+
+Suggestions for quiz problems are always welcome, and come with an obvious
+benefit to you if your problem is chosen!
+
+### Midterm Exam
+
+Each student will meet individually in the lab with members of the course
+development and instruction team and will be asked to assemble a functioning
+communications system using the lab kit. They will be evaluated on their methods
+and overall success. Students should also be prepared to address questions about
+course topics covered up to the date of the midterm exam.
+
+We anticipate scheduling the midterm exams during the lab sections the week just
+before Spring Break, February 28 and March 02, 2022.
+
+This exam is designed to ensure that each student (outside of a group dynamic)
+is absorbing the course concepts and becoming proficient in the lab setting.
+
+## Final Project
+
+The last several lab sections, nominally 4, will provide student groups with the
+opportunity to extend the lab kit to address a challenging scenario related to
+congested and contested radio spectrum.
+
+The final scenario will be suggested by the instruction team and their research
+collaborators, and students will propose a solution, develop and test it, and
+present it to the class and instruction team for feedback along the way.
+
+Specifically, after the first week students will present their approaches to
+each other for anonymous "red-team" peer critique. Weeks two and three will be
+spent implementing the proposed team solution. In the fourth and final week,
+research collaborators will be invited to visit campus or participate via web
+conference for final review of presentations and demonstrsations.
+
+We anticipate scheduling the final project presentations and demonstrations
+during the lab sections the last week of class, April 29 and 30, 2020.
+
+## Course Grade
+
+Your course grade will be based upon our best assessment of your understanding
+of the material covered during the semester. Roughly, the weights used in the
+grade assignment will be:
+
+- Homework: 30% (Nominally Problem Sets: 10%, Lab Reports: 20%)
+- Concept Quizzes: 20%
+- Midterm Exam: 25%
+- Final Project: 25%
+
+However, other factors such as participation and interactions in meetings can
+make a non-negligible difference in the course grade. In general, the process of
+assigning a course grade involves careful review of performance in all aspects
+of the course. Although the focus of the course is obviously learning, not
+grades, we know the course grade is important to you, and we want you to know
+that we take the process seriously.

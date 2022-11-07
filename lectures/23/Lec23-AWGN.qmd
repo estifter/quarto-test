@@ -1,0 +1,297 @@
+---
+title: "Lecture 23 - Additive White Gaussian Noise"
+jupyter: python3
+---
+
+
+## Summary
+
+In this lecture, we will develop the mathematics required to model thermal noise, and certain other sources of intereference, as additive white Gaussian noise (AWGN).
+
+## Motivation in Course Context
+
+All of the work we have done on our receiver to this point can be distilled into the equivalent circuit model shown in the figure below.
+
+![01](images/Lec23-01.png)
+
+Here $s(t)$ is the received signal voltage affected by the receiver circuit, $R_{eq}$ is the equivalent output impedance of the receiver circuit (often $50\ \Omega$), and $w_{eq}(t)$ is the equivalent output noise voltage source of the recevier circuit. The ADC is setup to measure the voltage across a load resistance $R_l$, which typically satisfies $R_l\simeq 1\ \mathrm{M}\Omega$.
+
+From the linearity of the equivalent circuit, the effects of the received signal voltage and equivalent noise voltage are *additive* across the load resistance. So the sampled output will be of the form
+
+$$
+  y[n] = \frac{R_l}{R_l+R_{eq}} \left( s[n] + w_e[n] \right) \simeq \left( s[n] + w_e[n] \right)
+$$
+
+assuming $R_{eq} \ll R_l$.
+
+## Outline
+
+* Random Variables and Vectors Review
+
+* Gaussian Random Variables and Vectors
+
+* Simulation of AWGN Processes
+
+## Random Variables and Vectors
+
+### Random Variable
+
+A *random variable* $X(\omega)$ is a mapping from the sample space $\Omega$ to
+the real numbers, i.e., $X : \Omega \rightarrow \mathbb{R}$.
+
+Notes
+* Cumulative distribution function (CDF) $F_{X}(x)=\mathbb{P}[X\leq x]$
+* Probability density function (PDF) $f_{X}(x)=\frac{d}{dx}F_{X}(x)$
+* Mean $\mu_{X}=\mathrm{E}[X]=\int_{-\infty}^{+\infty}xf_{X}(x)dx$
+* Variance $\sigma_{X}^{2}=\mathrm{E}[|X-\mathrm{E}[X]|^{2}]=\mathrm{E}[|X|^{2}]-|\mu_{X}|^{2}$
+
+### Pairs and Vectors of Random Variables
+
+A pair of variables $X$ and $Y$ are characterized as follows:
+
+* Joint CDF $F_{X,Y}(x,y):=\Pr[X\leq x,Y\leq y]$
+* Joint PDF $f_{X,Y}(x,y)=\frac{\partial}{\partial x}\frac{\partial}{\partial y}P_{X,Y}(x,y)$
+* Marginal PDF $f_{X}(x)=\int_{-\infty}^{+\infty}f_{X,Y}(x,y)dy$
+* Conditional PDF $f_{X|Y}(x|y)=\frac{f_{X,Y}(x,y)}{f_{Y}(y)}$
+* Independence $f_{X|Y}(x|y)=f_{X}(x)$ for all $x,y$
+* Covariance $\sigma_{X,Y}^{2}:=\mathrm{E}[(X-\mathrm{E}[X])(Y-\mathrm{E}[Y])^{*}]$
+* Uncorrelated $\sigma_{X,Y}^{2}=0$
+* Independent implies uncorrelated, but not necessarily vice versa
+
+A collection of random variables $X_1,X_2,\ldots,X_n$ can be collected into a random vector
+
+$$
+  \mathbf{X} = [\begin{array}{cccc}
+X_{1} & X_{2} & \cdots & X_{n}\end{array}]^{\intercal}
+$$
+
+and characterized as follows:
+
+* Joint CDF $F_{\mathbf{X}}(\mathbf{x})$ or PDF $f_{\mathbf{X}}(\mathbf{x})$
+* Mean vector
+
+$$
+  \boldsymbol{\mu}_{\mathbf{X}}=\mathrm{E}[\mathbf{X}]=[\begin{array}{cccc}
+\mu_{X_{1}} & \mu_{X_{2}} & \cdots & \mu_{X_{n}}\end{array}]^{\intercal}
+$$
+
+* Covariance matrix
+
+$$
+  K_{\mathbf{X}}=\mathrm{E}[(\mathbf{X}-\mathrm{E}[\mathbf{X}])(\mathbf{X}-\mathrm{E}[\mathbf{X}])^{\dagger}]
+$$
+
+* Uncorrelated if $K_{\mathbf{X}}$ diagonal
+* Eigen decomposition $K_{\mathbf{X}}=V\Sigma V^{\dagger}$, where
+
+    * $V$ is a unitary matrix, i.e., $VV^{\dagger}=I$, of eigenvectors
+    * $\Sigma$ is a diagonal matrix of non-negative eigenvalues
+
+* Complex-valued random variable can be treated as a 2D real-valued random vector
+
+**EXERCISE:** Given a random vector $\mathbf{X}$ and matrix $A$, let $\mathbf{Y} = A\mathbf{X}$. Verify that
+
+$$
+  \boldsymbol{\mu}_{\mathbf{Y}}=A \boldsymbol{\mu}_{\mathbf{X}}
+$$
+
+and
+
+$$
+  K_{\mathbf{Y}} = A K_{\mathbf{X}} A^\dagger
+$$
+
+## Gaussian Random Variables and Vectors
+
+### Gaussian Random Variable
+
+A Gaussian random variable $X$ has PDF
+
+$$
+  f_{X}(x)=N(x;\mu,\sigma^{2}):=\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-(x-\mu)^{2}/2\sigma^{2}}
+$$
+
+Notes
+* "Bell curve" centered at $\mu$
+* $\sigma^{2}$ specifies the "spread" of the curve
+* CDF not available in closed form, but either tabulated or computed by numeric integration
+* $N(z;0,1)$ is called the *standard normal* distribution, and for any Gaussian random variable $X$, $Z=(X-\mu)/\sigma$ has the standard normal distribution
+
+The function special function
+$$
+  Q(x):=\frac{1}{\sqrt{2\pi}}\int_{x}^{+\infty}e^{-z^{2}/2}dz
+$$
+
+is often used in communications. Note that:
+
+* $Q(0)=1/2$
+* $Q(-x)=1-Q(x)$ for $x < 0$
+
+The Python code generates what is called a *histogram* used to estimate the PDF of samples from a Gaussian distribution, and compares the historgram to the actual PDF.
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+mu, sigma = 5, 2 # mean and standard deviation
+s = np.random.normal(mu, sigma, 10000)
+count, bins, ignored = plt.hist(s, 50, density=True,label='Histogram')
+plt.plot(bins, 1/(sigma * np.sqrt(2 * np.pi)) *
+         np.exp( - (bins - mu)**2 / (2 * sigma**2) ),
+         linewidth=2, color='r',label='True PDF')
+plt.legend()
+plt.xlabel('$x$')
+plt.ylabel('$f_X(x)$')
+plt.show()
+```
+
+#### Jointly Gaussian Random Vectors
+
+A random vector $\mathbf{X} = [\begin{array}{cccc}
+X_{1} & X_{2} & \cdots & X_{n}\end{array}]^{\intercal}$ is said to be *jointly Gaussian* if its joint distribution is of the form
+
+$$
+  f_{\mathbf{X}}(\mathbf{x})=\frac{1}{\sqrt{(2\pi)^{n}|K_{\mathbf{X}}|}}e^{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu}_{\mathbf{X}})K_{\mathbf{X}}^{-1}(\mathbf{x}-\boldsymbol{\mu}_{\mathbf{X}})^{\dagger}}
+$$
+
+Notes
+* The jointly Gaussian distribution is completely specified by the mean vector $\boldsymbol{\mu}_{\mathbf{X}}$ and the covariance matrix $K_{\mathbf{X}}$ of the random vector
+* Linear transformations of jointly Gaussian random variables are jointly Gaussian
+* Equi-probability density contours of jointly Gaussian variables are ellipses. The ellipses are centered at the mean vector $\boldsymbol{\mu}_{\mathbf{X}}$, and if we consider the eigen decomposition $K_{\mathbf{X}}=V\Sigma V^{\dagger}$, the principle axes of the ellipses are aligned to the eigenvectors in $V$, and the relative spread of the distribution along each major axis is controlled by the corresponding eignvalue in $\Sigma$.
+* Uncorrelated jointly Gaussian random variables are mutually independent. In particular, if
+
+$$
+  K_{\mathbf{X}} = \mathrm{diag}(\sigma_1^2,\sigma_2^2,\ldots,\sigma_n^2)
+$$
+
+then
+
+$$
+  f_{\mathbf{X}}(\mathbf{x})=\prod_{i=1}^{n} N(x_i;\mu_i,\sigma_i^{2}) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi\sigma_i^{2}}}e^{-(x_i-\mu_i)^{2}/2\sigma_i^{2}}
+$$
+
+The Python code below can be used to experiment with the 2D jointly Gaussian distribution, and generates what is called a *scatter plot* of samples from the distribution.
+
+```{python}
+# Mean vector
+Mu_X = [1, 2]
+
+# Eigenvectors in terms of a 2D Givens rotation
+theta = 2*np.pi/8
+V = np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]])
+# Eigenvalues
+Sigma = np.array([[3,0],[0,1]])
+
+K_X = np.matmul(np.matmul(V,Sigma),np.transpose(V))
+
+x, y = np.random.multivariate_normal(Mu_X, K_X, 5000).T
+
+plt.plot(x, y, '.')
+plt.xlabel("$x$")
+plt.ylabel("$y$")
+plt.axis('square')
+plt.show()
+```
+
+## Simulation of AWGN Processes
+
+In the previous two lectures, we summarized a few important results about the effects of thermal noise in our receiver. They are:
+
+1. Thermal noise in all the resistors in the receiver can be modeled as stationary, white Gaussian noise. These noise sources can further be modeled as being independent of each other.
+
+2. The noise power at the output of the receiver can be determined form the noise power at its input, its overall gain, and its noise figure.
+
+3. Assuming the circuits behave linearly on the noise signals, the output noise should be well-modeled as white Gaussian as well.
+
+4. In the equivalent circuit model, the signal and output noise sources superimpose on the load.
+
+Suppose we want to simulate a bandlimited thermal and circuit noise source for the output of a receiver. We can generate a large number of independent and identically distributed (IID) Gaussian random samples that are zero mean with the appropriate variance, and apply bandlimited interpolation to produce the corresponding continuous-time random voltage signal.
+
+In particular, let $W[n] \sim N(0,\sigma_w^2)$, $n=0,1,2,\ldots,N-1$, and then let
+
+$$
+  W(t) = \sum_{n=0}^{N-1} W[n]\ \mathrm{sinc}\left(\frac{t-nT_s}{T_s} \right)
+$$
+
+where $T_s=1/(2B)$.
+
+As $N$ becomes large, the resulting random waveform for $t\in[LT_s,(N-1-L)T_s]$ will be Gaussian and approximately bandlimited, and will be a good model for bandlimited thermal and circuit noise. Here $L$ is a positive integer that eliminates some of the edge effects.
+
+The last issue that we have to address is the approrpriate choice of the noise variance for the simulated process. If the equivalent noise input to our receive is thermal noise with power spectral density $4kTR_{eq}$, and our receiver has overall gain $G$ and noise figure $\mathrm{NF}$, then we should set
+
+$$
+  \sigma_w^2 = \mathrm{NF}\cdot G \cdot (4kTR_{eq}B)
+$$
+
+where $R_{eq}$ is the equivalent resistance generating the thermal noise at the receiver input.
+
+The following Python code interpolates IID Gaussian samples
+
+```{python}
+from scipy import signal
+
+# Compute the standard deviation of the thermal noise samples
+Req=50
+B=25e6
+T=300
+k=1.38e-23
+G=1000 # 30 dB
+NF=2   #  3 dB
+sigma_w = np.sqrt(NF*G*(4*k*T*Req*B))
+```
+
+```{python}
+# Generate IID zero-mean random Gaussian samples
+N=10000
+wn = np.random.normal(0.0,sigma_w,N)
+```
+
+```{python}
+# Frequencies and oversampling
+fs=100e6     # ADC sampling rate
+Ts=1/fs      # ADC sampling period
+M=int(fs/B)  # Oversampling factor for CT approximation
+
+# Sinc interpolation filter, truncated to +/- L periods
+L=20
+n=np.linspace(-L*M,L*M,2*L*M+1)
+h=np.sinc(n/M)
+
+# Plot
+plt.stem(n,h,use_line_collection=True)
+plt.xlabel('$n$')
+plt.ylabel('$\mathrm{sinc}(n/M)$')
+plt.show()
+```
+
+```{python}
+# Interpolation
+wt = signal.upfirdn(h,wn,M,1)
+plt.plot(Ts*np.arange(wt.size),wt,'-')
+plt.xlabel('Time (s)')
+plt.ylabel('Noise Voltage $w_{eq}(t)$')
+plt.show()
+```
+
+```{python}
+## Gaussian Histogram
+
+count, bins, ignored = plt.hist(s, 50, density=True,label='Histogram')
+plt.show()
+```
+
+We expect the noise PSD to be the value below in the passband
+
+```{python}
+SwdBm=10*np.log10(NF*G*(4*k*T*Req)*1000)
+print(SwdBm)
+```
+
+```{python}
+# Frequency domain view
+Pww, freqs = plt.psd(wt*np.sqrt(1000),512,fs,sides='twosided',label='Bandlimited, Measured')
+plt.plot(freqs,SwdBm*np.ones(freqs.size),'--',label='Wideband, Predicted')
+plt.xlabel('Frequency (MHz)')
+plt.ylabel('Power Spectral Density $S_{w_{eq}}(f)$ (dBm)')
+plt.legend()
+plt.show()
+```

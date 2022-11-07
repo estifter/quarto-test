@@ -1,0 +1,59 @@
+project:
+  type: website
+
+  output-dir: _output
+  render:
+    - "*.qmd"
+
+execute:
+  freeze: auto
+
+website:
+  title: Radioware
+
+  page-navigation: true
+
+  sidebar:
+    style: floating
+    search: true
+    contents:
+      - section: Front Matter
+        contents:
+          - frontmatter/lab-setup.qmd
+          - frontmatter/syllabus.qmd
+          - frontmatter/jupyter-github.qmd
+          - frontmatter/teamviewer.qmd
+      - text: "---"
+      - section: Lectures
+        contents:
+          - lectures/01/Lec01-Overview.qmd
+          - lectures/02/Lec02-SigSys.qmd
+          - lectures/03/Lec03-Sampling.qmd
+          - lectures/04/Lec04-CrossDomainProcessing.qmd
+          - lectures/05/Lec05-SignalSpace.qmd
+          - lectures/06/Lec06-DigitalPacketsSignaling.qmd
+          - lectures/07/Lec07-LayeredProtocols.qmd
+          - lectures/08/Lec08-LinkPerformance.qmd
+          - lectures/09/Lec09-AmplitudeModulation.qmd
+          - lectures/10/Lec10-AMCircuits.qmd
+          - lectures/11/Lec11-EmagAntennas.qmd
+          - lectures/12_old/Lec12-BWEfficientAM.qmd
+          - lectures/21/Lec21-ThermalNoise.qmd
+          - lectures/22/Lec22-NoiseFigure.qmd
+          - lectures/23/Lec23-AWGN.qmd
+
+  page-footer:
+    left:
+      - text: wireless.nd.edu
+        href: wireless.nd.edu
+    center:
+      - text:
+          By Nick Laneman, Jon Chisum, and Bert Hochwald<br>© Copyright
+          2020-2022, All Rights Reserved.
+    border: true
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    page-layout: full

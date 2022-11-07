@@ -1,0 +1,217 @@
+# Lecture 05 - Signal Space
+
+## Finite Collections of Waveforms
+
+Most digital communications problems can be abstracted into a transmitter that sends one of $M$ CT waveforms
+
+$$
+\{ s_0 (t), \; s_1 (t), \; \ldots,\; s_{M-1} (t) \}
+$$
+
+corresponding to a message of $\lceil \log_2 M \rceil$ bits.
+
+In the following lecture we will develop a mathematical framework for studying the structure of 
+such collections as it relates to generating and processing waveforms.
+
+## Inner Product Spaces in the Abstract
+
+What communication engineers call "signal space" is known as an "inner product space" in mathematics.
+
+To formalize inner product spaces, we begin with vector space $\mathbb{V}$ which is a set of vectors $v \in \mathbb{V}$
+which is closed under both vector addition and scalar multiplication, i.e., 
+
+- if $\vec{u}, \vec{v} \in \mathbb{V}$, then $\vec{u} + \vec{v} \in \mathbb{V}$
+- if $\vec{v} \in \mathbb{V}$, $\alpha \in \mathbb{R}$, then $\alpha \cdot \vec{v} \in \mathbb{V}$
+
+An **inner product space** is a vector space with an inner product operation $\langle \vec{u}, \vec{v} \rangle$ for
+$\vec{u}, \vec{v} \in \mathbb{V}$ satisfying
+
+- **Linearity** $\langle \alpha \vec{u} + \beta \vec{v}, \vec{w} \rangle = \alpha \langle \vec{u}, \vec{w} \rangle + \beta \langle \vec{v}, \vec{w} \rangle$ <!-- \; \; \vec{u}, \vec{v}, \vec{w} \in \mathbb{V}; \; \alpha, \beta \in \mathbb{R}$ (or $\mathbb{C}$) -->
+- **Symmetry** $\langle \vec{u}, \vec{v} \rangle = \langle \vec{v}, \vec{u} \rangle^*$ <!--\; \; \vec{u}, \vec{v} \in \mathbb{V}$ -->
+- **Nullity** $\langle \vec{v}, \vec{v} \rangle = 0 \Leftrightarrow \vec{v} = 0$
+
+Example: 
+
+- $\mathbb{R}^n \langle \vec{x}, \vec{y} \rangle = \vec{y}^{\, T} \vec{x}$ 
+  _(This is what we normally call the "dot product")_
+- $\mathbb{C}^n \langle \vec{x}, \vec{y} \rangle = \vec{y}^{\, \dagger} \vec{x}$ 
+  _(Note that the dagger ($\dagger$) represents the Hermitian Transpose, i.e., transpose + conjugate)_
+
+### Norm and Angle
+
+The norm (length) of a vector is given by $\|\vec{v}\| = \sqrt{\langle \vec{v}, \vec{v} \rangle}$.
+
+The inner product can be related to an **angle** between two vectors $\vec{v_1}$ and $\vec{v_2}$
+
+$$
+\cos \theta = \frac{\langle \vec{v_1}, \vec{v_2} \rangle}{\| \vec{v_1} \| \cdot \| \vec{v_2} \|}
+$$
+
+This allows us to draw pictures and exploit geometry!
+
+![Relationship between norm and angle](./diagrams/norm-angle.svg)
+
+Two vectors are **orthogonal** if $\langle \vec{v_1}, \vec{v_2} \rangle = 0$, i.e., $\theta = \pm \frac{\pi}{2}$ ($\pm \, 90^\circ $), and we still have the familiar **Pythogrean Theorem**:
+If $\vec{v_1}, \vec{v_2}$ orthogonal then $\| \vec{v_1} + \vec{v_2} \|^2 = \| \vec{v_1} \|^2 + \| \vec{v_2} \|^2$
+
+### Orthonormal Basis
+
+An **orthonormal basis** for an inner product space $\mathbb{V}$ is a collection of vectors $\{ \vec{\varphi}_1, \; \vec{\varphi}_2, \; \ldots, \; \vec{\varphi}_k \}$ such that
+
+1. $\langle \vec{\varphi}_i, \vec{\varphi}_j \rangle = \begin{cases} 1 & \text{if} \; i = j \; \; \text{(unit length)} \\ 0 & \text{if} \; i \neq j \; \; \text{(orthogonal)} \end{cases}$
+2. Any vector in $\mathbb{V}$ can be written **uniquely** as a linear combination of the basis vectors
+$$
+\vec{v} = \sum_{i=1}^k \alpha_i \varphi_i \; \; \; \text{for some} \; \alpha_i \in \mathbb{R} (\text{or} \; \mathbb{C})
+$$
+
+We highlight 2 important equations which can be derived from the above:
+
+- **Analysis**: $\alpha_i = \langle \vec{v}, \vec{\varphi}_i \rangle$, $i = 1, 2, \ldots, K$
+- **Synthesis**: $\vec{v} = \sum_{i=1}^K \alpha_i \, \varphi_i$ for some $\alpha_i \in \mathbb{R}$ (or $\mathbb{C}$)
+
+Note that given a set of vectors $\{ \vec{v_1}, \; \vec{v_2}, \; \ldots, \; \vec{v_M} \}$, we can generate an
+orthonormal set with the same span via the Gram-Schmidt procedure.
+
+## Signals as Vectors in an Inner Product Space
+
+The correlation $\langle x(t), y(t) \rangle = \int_{-\infty}^\infty x(t) y(t) dt$ is a valid inner product 
+on the set of all finite-energy waveforms. 
+
+The set $\{ s_0 (t), \; s_1 (t), \; \ldots,\; s_{M-1} (t) \}$ used for communication
+are invariably finite energy, so they live in this space.
+
+Let $\{ \vec{\varphi}_1, \; \vec{\varphi}_2, \; \ldots, \; \vec{\varphi}_k \}$ be an orthonormal basis for the 
+subspace spanned by $\{ s_0 (t), \; s_1 (t), \; \ldots,\; s_{M-1} (t) \}$. Note that
+$K$ is finite and often _much_ smaller than $M$.
+
+Then
+
+$$
+s_m (t) = \sum_{k=1}^K \alpha_{mk} \varphi_k (t) = 
+\left[
+\begin{array}{cc}
+    \alpha_{m1} & \alpha_{m2} & \ldots & \alpha_{mK} \\
+\end{array}
+\right]
+\left[
+\begin{array}{cc}
+    \varphi_{1} \\ \varphi_{2} \\ \vdots \\ \varphi_{K} \\
+\end{array}
+\right]
+$$
+
+$$
+\alpha_{mk} = \langle s_m (t), \; \varphi_k (t) \rangle \; \; \text{for} \; m = 0, 1, \ldots, M-1 \; \text{and} \; k = 1, 2, \ldots, K
+$$ 
+
+and
+
+$$
+\begin{aligned}
+\langle s_m (t), s_{m'} \rangle &= \left\langle \sum_{k=1}^K \alpha_{mk} \, \varphi_k (t), \sum_{k'=1}^K \alpha_{m'k'} \, \varphi_{k'} (t) \right\rangle \\
+&= \sum_{k=1}^K \sum_{k'=1}^K \alpha_{mk} \, \alpha_{m'k'}^* \langle \varphi_k (t), \varphi_{k'} (t) \rangle \; \text{(which is 0 for} \; k \neq k' \text{)} \\
+&= \sum_{k=1}^K \alpha_{mk} \, \alpha_{m'k}^* \\
+&= \vec{s}_{m'}^{\, \dagger} \, \vec{s}_{m}
+\end{aligned}
+$$
+
+## Connections Between Two Inner Product Spaces
+
+![Mapping between signal space and signals in the time domain](diagrams/two-spaces.svg)
+
+We can map between two inner product spaces using the Analysis and Synthesis equations. 
+We call $\mathbb{C}^K$ **signal space**. (very often $K=2$) A signal space has a few notable components:
+
+- $\{ \vec{s_0}, \; \vec{s_1}, \; \ldots, \; \vec{s_{M-1}} \}$ collectively called a **constellation**.
+- $\vec{s}_m$ called a **symbol**, $m=0, 1, \ldots, M-1$
+
+We can either design a set of basis signals $\{ s_0 (t), \; s_1 (t), \; \ldots,\; s_{M-1} (t) \}$
+or choose both a constellation $\{ \vec{\alpha_0}, \; \vec{\alpha_1}, \; \ldots, \; \vec{\alpha_{M-1}} \}$
+and a basis $\{ \vec{\varphi_0}, \; \vec{\varphi_1}, \; \ldots, \; \vec{\varphi_{M-1}} \}$
+when designing a signal space.
+
+![Example of basis signals and their corresponding representation as a constellation](diagrams/signal-space.svg)
+
+Notice that
+
+$$
+s_0 (t) = 
+\left[ 
+\begin{array}{cc}
+    \sqrt E & \sqrt E \\
+\end{array}
+\right] 
+\left[
+\begin{array}{c}
+    \varphi_{1} (t) \\ \varphi_{2} (t) \\
+\end{array}
+\right]
+$$
+$$
+s_1 (t) = 
+\left[ 
+\begin{array}{cc}
+    \sqrt E & \sqrt E \\
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+    \varphi_{1} (t) \\ \varphi_{2} (t) \\
+\end{array}
+\right]
+$$
+$$
+s_2 (t) = 
+\left[ 
+\begin{array}{cc}
+    -\sqrt E & \sqrt E \\
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+    \varphi_{1} (t) \\ \varphi_{2} (t) \\
+\end{array}
+\right]
+$$
+$$
+s_3 (t) = 
+\left[ 
+\begin{array}{cc}
+    -\sqrt E & -\sqrt E \\
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+    \varphi_{1} (t) \\ \varphi_{2} (t) \\
+\end{array}
+\right]
+$$
+
+## Minimum Distance Detection
+
+Suppose a transmitter selects one of 
+$\{ s_0 (t), \; s_1 (t), \; \ldots, \;s_{M-1} (t) \}$. 
+A receiver then obtains $r(t)$ which suffers some distortion relative to the transmitter. 
+The natural decision criterion is 
+
+$$
+\begin{aligned}
+\hat{m} &= \operatorname*{argmin}_{m=0,1,\ldots,M-1} \int | r(t) - s_m (t) |^2 dt \\
+&= \operatorname*{argmin}_{m=0,1,\ldots,M-1} \| r(t) - s_m (t) \|^2 \\
+\end{aligned}
+\newline
+\downarrow
+\newline
+\begin{aligned}
+    \| r(t) - s_m (t) \|^2 
+    &= \| r(t) \|^2 - \langle r(t), s_m (t) \rangle - \langle s_m (t), r(t) \rangle + \| s_m (t) \|^2 \\
+    &= \| r(t) \|^2 - 2 \operatorname{Re}\{\langle r(t), s_m (t) \rangle\} + \| s_m (t) \|^2 \\
+    &= \| r(t) \|^2 - 2 \operatorname{Re}\left\{\left\langle r(t), \sum\nolimits_{k=1}^K \alpha_{mk} \varphi_k (t) \right\rangle\right\} + \| \vec{s_m} \|^2 \\
+    &= \| r(t) \|^2 - 2 \operatorname{Re}\left\{ \sum\nolimits_{k=1}^K \alpha_{mk}^* \left\langle r(t), \varphi_k (t) \right\rangle\right\} + \| \vec{s_m} \|^2 \\
+    &= \operatorname*{argmin}_{m=0,1,\ldots,M-1} \| \vec{r} - \vec{s_m} \|^2 \\
+\end{aligned}
+$$ 
+
+i.e., the receiver projects $r(t)$ onto the basis vectors and then performs minimum Euclidean distance detection in the signal space.
+
+![Block diagram for a minimum distance detector](./diagrams/corr-receiver.svg)

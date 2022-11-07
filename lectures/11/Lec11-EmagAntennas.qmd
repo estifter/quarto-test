@@ -1,0 +1,843 @@
+---
+title: "Lecture 11 - Electromagnetic Waves and Antennas"
+jupyter: python3
+---
+
+
+## Summary
+
+In this lecture, we will recall the solutions to Maxwell's equations in the far field to understand the salient aspects of propagation of electromagnetic (EM) waves from a transmit antenna to a receive antenna. The summary is distilled from the book Constantine A. Balanis, *Antenna Theory - Analysis and Design*, 4th Edition, John Wiley & Sons, 2016. Available online via ND Libraries' subscription to [Knovel](https://app-knovel-com.proxy.library.nd.edu/s.v?kbcvUaCe).
+
+## Motivation in Course Context
+
+Now that we have prototyped a working wireline communication link, we seek to cut the wire and go wireless. We have looked at digital communication networks and wired links from the top down, and now we will begin to look at radio links from the bottom up.
+
+As illustrated in the figure below, we will begin with developing developing circuit-level models for how a current or voltage input to a transmit antenna translates into a current or voltage output from a receive antenna.
+
+![Current transfer function model of a transmit antenna, electromagnetic wave propagation, and receive antenna.](images/Lec11-01.png){#fig-antenna-transfer-function}
+
+As we will see, the physics of electromagnetic (EM) waves and a number of antenna parameters affect this transfer function.
+
+## Lecture Outline
+
+* Electromagnetic Wave Propagation
+
+* Antenna Parameters
+
+* RF Link Budget
+
+## Electromagnetic Wave Propagation
+
+Section Outline
+
+* Maxwell's Equations
+
+* Far-Field Solution
+
+* Example: Infinitesimal Dipole
+
+### Maxwell's Equations
+
+Electromagnetic (EM) waves satisfy Maxwell's equations. These equations relate the *electric field* $\mathbf{E}$ and the *magnetic field* $\mathbf{B}$, both of which are three-dimensional vector functions that can vary with both space $\mathbf{r}=(x,y,z)$ and time $t$,
+
+$$
+  \mathbf{E}(\mathbf{r},t) = (E_x(\mathbf{r},t),E_y(\mathbf{r},t),E_z(\mathbf{r},t))
+$$
+
+$$
+  \mathbf{B}(\mathbf{r},t) = (B_x(\mathbf{r},t),B_y(\mathbf{r},t),B_z(\mathbf{r},t))
+$$
+
+An EM wave in free space influenced by a scalar *charge density* function $\rho(\mathbf{r},t)$ and a vector *current density* function $\mathbf{J}(\mathbf{r},t)$ satisfies the partial differential equations
+
+\begin{align}
+\nabla \cdot \mathbf{E} &= \frac{\rho}{\epsilon_0} \\
+\nabla \cdot \mathbf{B} &= 0 \\
+\nabla \times \mathbf{E} + \frac{\partial \mathbf{B}}{\partial t} & = 0 \\
+\nabla \times \mathbf{B} - \frac{1}{c_0^2}\frac{\partial \mathbf{E}}{\partial t} &= \mu_0 \mathbf{J}
+\end{align}
+
+or the wave equations
+
+\begin{align}
+\frac{1}{c_0^2} \frac{\partial^2 \mathbf{E}}{\partial t^2} - \nabla^2 \mathbf{E} &= - \left(\frac{1}{\epsilon_0}\nabla \rho + \mu_0 \frac{\partial \mathbf{J}}{\partial t} \right) \\
+\frac{1}{c_0^2} \frac{\partial^2 \mathbf{B}}{\partial t^2} - \nabla^2 \mathbf{B} &= \mu_0 \nabla \times \mathbf{J}
+\end{align}
+
+where $\epsilon_0$ is the *permittivity* of free space, $\mu_0$ is the *permeability* of free space,, and 
+
+$$
+  c_0 = \frac{1}{\sqrt{\mu_0\epsilon_0}}=2.99792458\times 10^8\ \mathrm{m/s}
+$$
+
+is the speed of light in free space.
+
+Rectangular and spherical coordinates, the differential operator $\nabla$, divergence (dot product with $\nabla$), curl (cross product with $\nabla$), and Laplacian (multiplication by $\nabla^2=\nabla \cdot \nabla$) are summarized in the appendix.
+
+### Far-Field Solutions for a Transmitting Antenna
+
+An *antenna* is an electrical transducer that converts a time-varying current into an EM wave, or vice versa.
+
+If we locate an antenna at the origin of our coordinate system, and apply a time-varying input current or voltage to the antenna, the geometric shape of the antenna affects a particular time-varying charge density $\rho$ and current density $\mathbf{J}$ about the origin. The charge and current densities become "sources" in Maxwell's equations, and we refer to the antenna as a *transmit antenna* because these sources generate the resulting EM waves that propagate away from the origin.
+
+Solving Maxwell's equations for the resulting electric field $\mathbf{E}(\mathbf{r},t)$ and magnetic field $\mathbf{B}(\mathbf{r},t)$ becomes quite involved, even for the simplest transmit antenna geometries. However, we can make some general, albeit approximate, observations about the fields and radiation patterns around the antenna if we consider the distance from the origin $r=\lVert \mathbf{r}\rVert$ to be sufficiently large. This regime is called the *far field* of the antenna.
+
+#### Time-Harmonic Wave
+
+For simplicity, we consider a sinusoidal input with a single frequency $f$ Hertz, and we write the resulting electric and magnetic field intensities in the forms
+
+$$
+  \mathbf{E}(\mathbf{r},t)=\mathrm{Re}\left[\mathbf{E}_0(\mathbf{r})e^{j2\pi f t} \right]
+$$
+
+$$
+  \mathbf{H}(\mathbf{r},t)=\mathrm{Re}\left[\mathbf{H}_0(\mathbf{r})e^{j2\pi f t} \right]
+$$
+where $\mathbf{E}_0(\mathbf{r})$ and $\mathbf{H}_0(\mathbf{r})$ represent complex-valued phasor vectors. Notice that this representation allows us to separate the spatial and temporal / spectral dependence of the fields.
+
+#### Electric Field
+
+In spherical coordinates, for large $r$, solutions to Maxwell's equations for the electric field phasor vector are approximately of the form
+
+$$
+  \mathbf{E}_0(r,\theta,\phi) \simeq (0,E_{\theta}(\theta,\phi),E_{\phi}(\theta,\phi)) \frac{e^{-jk r}}{r}
+$$
+
+where $k=2\pi / \lambda$ is the *wave number*. Notice that the electric field has no radial component under this approximation, i.e., $\mathbf{E}_0 \cdot \mathbf{r} = 0$. Furthermore, notice that the dependence upon $r$ and the dependence upon $\theta,\phi$ are separated.
+
+Substituting this form of the electric field phasor vector, we obtain, for example, the following form of the elevation component of the time-varying EM wave
+
+$$
+  E_{\theta}(r,\theta,\phi,t)=\frac{1}{r} \left|E_{\theta}(\theta,\phi) \right| \cos\left(2\pi f t - kr + \angle E_{\theta}(\theta,\phi) \right)
+$$
+
+We recognize this as a decaying sinusoidal wave propagating away from the origin in the direction of $\mathbf{r}$ with speed $c_0$, frequency $f$, and wavelength $\lambda=c_0/f$.
+
+The Python code below animates one electric field component for a frequency of $f=50$ MHz over a radial range of $r=5\lambda$ to $r=10\lambda$ over one period $t\in[0,1/f]$. We see that the wave propagates away from the origin, i.e., in the direction of increasing $r$.
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+from IPython import display
+import time
+
+c=2.99792458e8
+f=50e6
+lamb=c/f
+r=np.linspace(5*lamb,10*lamb,200)
+t=np.linspace(0,1.0/f,50)
+for n in range(0,np.size(t)):
+    E=np.cos(2*np.pi*f*t[n]-2*np.pi*r/lamb)/r
+    plt.plot(r,E,'-')
+    plt.axis([5*lamb,10*lamb,-1/lamb/5,1/lamb/5])
+    plt.xlabel('Distance $r$')
+    plt.ylabel('Electric Field $E_\\theta$')
+    display.clear_output(wait=True)
+    display.display(plt.gcf())
+    time.sleep(0.001)
+    plt.clf()
+```
+
+#### Polarization
+
+If we also consider the orthogonal component of the electric field
+
+$$
+  E_{\phi}(r,\theta,\phi,t)=\frac{1}{r} \left|E_{\phi}(\theta,\phi) \right| \cos\left(2\pi f t - kr + \angle E_{\phi}(\theta,\phi) \right)
+$$
+
+several interesting cases arise:
+
+* *Linear Polarization* - Only one component, or two orthongonal components with phases that are integer multiples of $\pi$, i.e.,
+
+$$
+  \angle E_{\phi}(\theta,\phi)-\angle E_{\theta}(\theta,\phi) = n\pi, \quad n=0,1,2,\ldots
+$$
+
+* *Circular Polarization* - Two orthogonal components with the same magnitude, i.e.,
+
+$$
+  |E_{\theta}(\theta,\phi)|=|E_{\phi}(\theta,\phi)|
+$$
+
+and phase differences that are odd multiples of $\pi/2$, i.e.,
+
+$$
+  \angle E_{\phi}(\theta,\phi)-\angle E_{\theta}(\theta,\phi) =
+\begin{cases}
++\left(\frac{1}{2}+2n)\pi \right), \quad n=0,1,2,\ldots & \mathrm{clockwise} \\
+-\left(\frac{1}{2}+2n)\pi \right), \quad n=0,1,2,\ldots & \mathrm{counter clockwise}
+\end{cases}
+$$
+
+* *Elliptical Polarization* - There are two cases in which elliptical polarization arises. First, the phases can satisfy either of those for circular polarization, but the field component magnitudes are not the same. Second, the phase difference is not equal to any multple of $\pi / 2$, regardless of the magnitudes.
+
+Some nice visualizations of these difference polarizations are available at: [http://hyperphysics.phy-astr.gsu.edu/hbase/phyopt/polclas.html](http://hyperphysics.phy-astr.gsu.edu/hbase/phyopt/polclas.html)
+
+#### Magnetic Field
+
+Similarly, for large $r$, solutions to Maxwell's equations for the magnetic field phasor vector are approximately of the form
+
+$$
+  \mathbf{H}_0(r,\theta,\phi) \simeq \frac{1}{\eta_0} (0,-E_{\phi}(\theta,\phi),E_{\theta}(\theta,\phi)) \frac{e^{-jk r}}{r}
+$$
+
+where $\eta_0=\sqrt{\mu_0/\epsilon_0}$ is the *intrinsic impedance* of the free-space medium. Notice that $\mathbf{H}_0$ also has no radial component, i.e., $\mathbf{H}_0 \cdot \mathbf{r}=0$, and that the electric field and magnetic field are orthogonal, $\mathbf{E}_0 \cdot \mathbf{H}_0=0$, under this approximation.
+
+These observations are consistent with the "right hand rule" that says the cross product of the electric and magnetic fields points in the direction of propagation, i.e., $\mathbf{E}_0 \times \mathbf{H}_0 \propto \mathbf{r}$.
+
+#### Power Density
+
+Finally, the average power density vector of the EM wave is
+
+\begin{align}
+\mathbf{W}_0(r,\theta,\phi) &= \frac{1}{2}\mathrm{Re}[\mathbf{E}_0 \times \mathbf{H}_0^*] \\
+&\simeq \frac{1}{2\eta_0 r^2} (|E_{\theta}(\theta,\phi)|^2+|E_{\phi}(\theta,\phi)|^2,0,0)
+\end{align}
+
+i.e., all of the power density points in the radial direction of propagation $\mathbf{r}$. The average power density vector is obtained by averaging the instantaneous Poynting vector $\mathbf{W}(\mathbf{r},t)=\mathbf{E}(\mathbf{r},t)\times\mathbf{H}(\mathbf{r},t)$ over one period $T=1/f$ of the EM wave.
+
+The average power radiated by the antenna can be written as the surface integral of the average power density $\mathbf{W}_0(r,\theta,\phi)$ over a sphere $S$ of radius $r$. Specifically,
+
+\begin{align}
+P_{\mathrm{rad}} &= \oint_{S} \mathbf{W}_0 \cdot d\mathbf{s} = \int_{0}^{2\pi} \int_{0}^{\pi} \mathbf{W}_0 \cdot \frac{\mathbf{r}}{\lVert \mathbf{r} \rVert } r^2 \sin \theta d\theta d\phi \\
+&= \int_{0}^{2\pi} \int_{0}^{\pi} \frac{1}{2\eta_0}  \left(|E_{\theta}(\theta,\phi)|^2+|E_{\phi}(\theta,\phi)|^2 \right) \sin\theta d\theta d\phi
+\end{align}
+
+Note that at the point $\mathbf{r}$ on the sphere $S$, $\mathbf{r}/\lVert \mathbf{r} \rVert$ represents the unit normal vector of the sphere at $\mathbf{r}$, and the differential area is $dA = r^2 \sin\theta d\theta d\phi$.
+
+### Example: Infinitesimal Dipole Antenna
+
+In free space, consider an infinitesimal dipole antenna of length $l$ with current $I_0$ uniformly distributed over the interval $z\in[-l/2,l/2]$. We now summarize the results of solving Maxwell's equations for this antenna from Balanis, Chapter 4.
+
+#### Electric Field
+
+The electric field in spherical coordiates at the point $\mathbf{r}=(r,\theta,\phi)$ (stricly away from the source itself) satisfies
+
+\begin{align}
+E_r &= \eta_0 \frac{I_0 l \cos\theta}{2\pi r^2}\left[1+\frac{1}{jkr} \right] e^{-jkr} \\
+E_{\theta} &= j\eta_0 \frac{k I_0 l \sin\theta}{4\pi r} \left[1+\frac{1}{jkr}-\frac{1}{(kr)^2} \right] e^{-jkr} \\
+E_{\phi} &= 0
+\end{align}
+
+For $kr \gg 1$, which is referred to as the *far field region*, this result can be approximated as
+
+$$
+  \mathbf{E}_0(r,\theta,\phi) \simeq (0, j\eta_0 \frac{k I_0 l \sin\theta}{4\pi}, 0) \frac{e^{-jkr}}{r}
+$$
+
+The propgating wave then takes the form
+
+$$
+  E_{\theta}(r,\theta,\phi,t)=\frac{1}{r} \left|\frac{k I_0 l \sin\theta}{4\pi} \right| \cos\left(2\pi f t - kr + \frac{\pi}{2} \right)
+$$
+
+which shows the dependence on the magnitude $|I_0|$ and frequency $f$ of the input current. In particular, if the input current oscillates at frequency $f$, then the output EM wave oscillators at the same frequency $f$.
+
+Since all the other field components are zero, we see that the electric field oscillators only along the $\theta$ dimension, perpendicular to the direction of propagation. Such an electromagnetic wave is said to be *vertically polarized*.
+
+#### Magnetic Field
+
+Similary, the magnetic field intensity satisfies
+
+\begin{align}
+H_r &= 0 \\
+H_{\theta} &= 0 \\
+H_{\phi} &= j\frac{kI_0 l \sin\theta}{4\pi r}\left[1+\frac{1}{jkr} \right]e^{-jkr}
+\end{align}
+
+For $kr \gg 1$, this result can be approximated as
+
+$$
+  \mathbf{H}_0(r,\theta,\phi) \simeq (0,0,j\frac{kI_0 l \sin\theta}{4\pi}) \frac{e^{-jkr}}{r}
+$$
+
+As summarized earlier, we see that $H_\phi = \frac{1}{\eta_0} E_\theta$ in this far-field regime.
+
+#### Power Density
+
+The average power density vector for the dipole satisfies for $kr \gg 1$
+
+$$
+  \mathbf{W}_0(r,\theta,\phi) \simeq \left( \frac{\eta_0}{8} \left|\frac{I_0 l}{\lambda}\right|^2 \frac{\sin^2\theta}{r^2}, 0, 0 \right)
+$$
+
+Therefore, the power radiated by the antenna is
+
+\begin{align}
+P_{\mathrm{rad}} &\simeq \int_{0}^{2\pi} \int_{0}^{\pi} W_r r^2\sin\theta d\theta d\phi \\
+&\simeq \eta_0 \left( \frac{\pi}{3} \right) \left| \frac{I_0 l}{\lambda} \right|^2
+\end{align}
+
+Recalling that a current $I_O\cos(2\pi f t)$ through a resistor of $R\ \Omega$ dissipates power $P=I_0^2 R / 2$, we see that we can model the radiated EM power of the antenna as that of a resistance
+
+$$
+  R_{r} = \eta_0 \left( \frac{2\pi}{3} \right) \left| \frac{l}{\lambda} \right|^2
+$$
+
+which is called the *radiation resistance* of the antenna. This observation allows us to model the antenna as a circuit element, which is a concept we will revisit later in this lecture.
+
+## Antenna Parameters
+
+Section Outline
+
+* Radiation Intensity
+
+* Beamwidth
+
+* Directivity
+
+* Antenna Efficiency
+
+* Gain, Realized Gain
+
+* Effective Length and Area
+
+### Radiation Intensity
+
+The *radiation intensity* for an antenna in the far field is related to the electric field via
+
+  \begin{align}
+U(\theta,\phi) &:= \frac{r^2}{2\eta_0} \lVert \mathbf{E}_0(r,\theta,\phi) \rVert^2 \\
+&\simeq \frac{1}{2\eta_0} \left[ \left| E_{\theta}(\theta,\phi) \right|^2 + \left| E_{\phi}(\theta,\phi) \right|^2 \right]
+\end{align}
+
+where we have used the result
+
+$$
+  \mathbf{E}_0(r,\theta,\phi) \simeq (0,E_{\theta}(\theta,\phi),E_{\phi}(\theta,\phi)) \frac{e^{-jk r}}{r}
+$$
+
+The average power radiated by the antenna can be computed from the radiation intensity via
+
+$$
+  P_{\mathrm{rad}} = \int_{0}^{2\pi} \int_{0}^{\pi} U(\theta,\phi) \sin\theta d\theta d\phi
+$$
+
+#### Example: Isotropic Source
+
+An *isotropic source* is an idealized radiator with constant radiation intensity $U(\theta,\phi)=U_0$ for all $0 \le \theta \le \pi$ and $0 \le \phi \le 2\pi$. The average power radiated by such a source is
+
+$$
+  P_{\mathrm{rad}}=\int_{0}^{2\pi} \int_{0}^{\pi} U_0 \sin\theta d\theta d\phi = 4\pi U_0
+$$
+
+or
+
+$$
+  U_0 = \frac{P_{\mathrm{rad}}}{4\pi}
+$$
+
+#### Units: Watts per Steradian
+
+The units of radiation intensity are Watts per steradian (sr), or Watts per unit solid angle.
+
+One *steradian* is defined as the solid angle with its vertex at the center of a sphere of radius $r$ that is subtended by a spherical surface area equal to $r^2$, i.e., the same area as that of a square of side length $r$. Since the surface area of a sphere is $4\pi r^2$, there are a total of $4\pi$ steradians $(4\pi r^2 / r^2)$.
+
+![Illustration of steradians.](images/Lec11-03.png){#fig-steradian-illustration}
+
+With these units, the average power can be computed as
+
+$$
+  P_{\mathrm{rad}} = \int_{\Omega} U d\Omega
+$$
+
+which is an integral over all $4\pi$ steradians with $d\Omega=\sin\theta d\theta d\phi$.
+
+### Beamwidth
+
+A *beamwidth* of an antenna is generally defined as the angular separation between two identical points on opposite sides of the pattern maximum. For example, two important beamwidths include:
+
+* The *Half-Power Beamwidth (HPBW)* is the angle between two directions in which the radiation intensity is one-half the value of its maximum.
+
+* The *First-Null Beamwidth (FNBW)* is the angular separation between the first nulls of the radiation intensity.
+
+#### Example
+
+Supposed the normalized radiation intensity of an antenna is represented by
+
+$$
+  U(\theta)=\cos^2(\theta)\cos^2(3\theta)
+$$
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+```{python}
+theta=np.linspace(0,np.pi,100)
+U=np.cos(theta)**2 * np.cos(3*theta)**2
+plt.plot(theta/np.pi,U,'-')
+plt.plot(theta/np.pi,0.5*np.ones(np.size(theta)),'--')
+plt.plot(theta/np.pi,np.zeros(np.size(theta)),'--')
+plt.xlabel('Elevation $\\theta/\\pi$')
+plt.ylabel('Radiation Intensity $U(\\theta)$');
+```
+
+```{python}
+from scipy.optimize import fsolve
+
+func = lambda ang : 0.5 - np.cos(ang)**2 * np.cos(3*ang)**2
+theta_hp=fsolve(func, 0.05)[0]
+print(theta_hp)
+```
+
+Based upon the above root-finding method, the HPBW of the radiation intensity is approximately $\theta \simeq 0.25$ radians or $\theta / \pi \simeq 0.08$. This is verified below in the plot of $U(\theta)$ on a decibel (dB) scale.
+
+```{python}
+plt.plot(theta/np.pi,10*np.log10(U),'-')
+plt.plot(theta/np.pi,10*np.log10(0.5)*np.ones(np.size(theta)),'--')
+plt.xlabel('Elevation $\\theta/\\pi$')
+plt.ylabel('Radiation Intensity $U(\\theta)$ (dB)');
+```
+
+### Directivity
+
+The *directivity* of an antenna is the ratio of the radiation intensity in a given direction from the antenna to the radiation intensity averaged over all directions, or equivalently, the radiation intensity in a given direction from the antenna relative to that of an isotropic radiator. Mathematically,
+
+$$
+  D(\theta,\phi) := \frac{U(\theta,\phi)}{U_0} = \frac{4\pi U(\theta,\phi)}{P_{\mathrm{rad}}}
+$$
+
+If the direction is not specified, the direction of maximum radation intensity is implied, so that
+
+$$
+  D_{\max} = \max_{\theta,\phi} D(\theta,\phi)
+$$
+
+### Efficiency and Gain
+
+When we consider the interface between electronic circuits and an antenna, a variety of losses can arise.
+
+![Antenna terminals from Balanis.](images/BalanisAntennaTerminals.png){#fig-antenna-terminals}
+
+![Antenna losses from Balanis](images/BalanisAntennaLosses.png){#fig-antenna-losses}
+
+The total efficiency of an antenna $e_0$ attempts to capture all of these losses. It is a product of the following efficiency factors:
+
+* $e_r$ - the *reflection (mismatch) efficiency* caused by potential mismatch between a transmission line impedance and the antenna impedance
+
+* $e_{cd}$ - the *antenna radiation effiency*, which is often difficult to compute but can be measured experimentally
+
+With these parameters, we can relate the radiated output power to the input power of the circuits, and define appropriate notions of *gain*.
+
+The *gain* captures the transfer of power from the input of the antenna, without the transmission line, to the EM wave, and can be expressed as
+
+$$
+  G(\theta,\phi) = e_{cd} D(\theta,\phi)
+$$
+
+The *realized gain* captures the transfer of power from the input of the antenna, with the transmission line, to the EM wave, and can be expressed as
+
+$$
+  G_{re}(\theta,\phi) = e_r e_{cd} D(\theta,\phi)
+$$
+
+When the transmission line characteristic impedance (often $Z=50\ \Omega$) and the antenna input impedance are matched, then $e_r=1$ and the two gains are the same.
+
+### Impedance Models for Antennas
+
+Since we will be integrating antennas with electric circuits, we can model them as circuit elements.
+
+#### Transmit Antenna
+
+![Transmit antenna model from Balanis.](images/BalanisTransmitModel.png){#fig-tx-antenna-model}
+
+![Transmit antenna circuit model from Balanis.](images/BalanisTransmitEq.png){#fig-tx-antenna-circuit-model}
+
+Here, the quantities represent the following:
+
+* $Z_g = R_g + j X_g$ is the source impedance
+
+* $Z_a = R_a + j X_a$ is antenna impedance, where $R_a = R_r + R_L$
+
+* $R_r$ is the radiation resistance of the antenna
+
+* $R_L$ is the loss resistance of the antenna
+
+Note that maximum power is delivered to the antenna when we have *conjugate matching*, i.e.,
+
+$$
+  R_a = R_g\quad \quad X_a = - X_g
+$$
+
+In this case, the power delivered to the radiation resistance is
+
+$$
+  P_r = \frac{|V_g|^2}{8} \left[\frac{R_r}{(R_r + R_L)^2} \right]
+$$
+
+#### Receive Antenna
+
+![Receive antenna model from Balanis.](images/BalanisReceiveModel.png){#fig-rx-antenna-model}
+
+![Receive antenna circuit model from Balanis.](images/BalanisReceiveEq.png){#fig-rx-antenna-circuit}
+
+Here, the quantities represent the following:
+
+* $Z_T = R_T + j X_T$ is the load impedance
+
+* $Z_a = R_a + j X_a$ is antenna impedance, where again $R_a = R_r + R_L$
+
+* $R_r$ is the radiation resistance of the antenna
+
+* $R_L$ is the loss resistance of the antenna
+
+Note that maximum power is delivered to the load when we have *conjugate matching*, i.e.,
+
+$$
+  R_a = R_T\quad \quad X_a = - X_T
+$$
+
+In this case, the power delivered to the load resistance is
+
+$$
+  P_T = \frac{|V_T|^2}{8R_T}
+$$
+
+We note that the impedance is a function of frequency, so that we can only match over a small bandwidth.
+
+### Vector Effective Length
+
+The *vector effective length* (or *vector effective height*) of an antenna is represented by
+
+$$
+  \mathbf{l}_e(r,\theta,\phi) = (0, l_\theta(\theta,\phi), l_\phi(\theta,\phi))
+$$
+
+and provides a convenient way to convert between scalar currents and voltages and the vector electric field quantities.
+
+Specifically, when viewed as a transmitting antenna with input current amplitude $I_{\mathrm{in}}$, the electric field of an antenna with vector effective length $\mathbf{l}_e(r,\theta,\phi)$ can be expressed as
+
+$$
+  \mathbf{E}_0(r,\theta,\phi) = -j\eta_0 \frac{k I_{\mathrm{in}}}{4\pi} \mathbf{l}_e(r,\theta,\phi) \frac{e^{-jkr}}{r}
+$$
+
+When viewed in receiving mode, the effective length determines the open circuit voltage amplitude at the terminals of the antenna given an electric field impinging on the antenna:
+
+$$
+  V_{\mathrm{oc}} = \mathbf{E}_0(r,\theta,\phi) \cdot \mathbf{l}_e(r,\theta,\phi)
+$$
+
+We stress the the input current to the transmitting antenna and the voltage output from the receiving antenna are oscillating at frequency $f$, but these relationships focus on the current amplitude $I_{\mathrm{in}}$ and voltage amplitude $V_{\mathrm{oc}}$ and the electric field phasor vector $\mathbf{E}_0$.
+
+### Effective Area or Aperture
+
+The *effective area* or *aperture* of a receive antenna is written in equation form as
+
+$$
+  A_e = \frac{P_T}{W_i}=\frac{|I_T|^2 R_T / 2}{W_i}
+$$
+
+where $P_T$ is the power delivered to the load, $W_i$ is the power density of the incident EM wave, and $R_T$ is the load resistance. The effective aperture represents an area that, when multiplied by the radiation power density of the incident wave, gives the power received by the load resistance.
+
+Balanis goes into more detail on effective area, and one of the key results is that the maximum effective area $A_{e,\mathrm{max}}$ of an antenna is related to its maximum directivity $D_{\mathrm{max}}$ by
+
+$$
+  A_{e,\mathrm{max}} = \frac{\lambda^2}{4\pi} D_{\mathrm{max}}
+$$
+
+### Example: Half-Wavelength Dipole
+
+A dipole with length $l=\lambda / 2$ oriented along the $z$ axis has the following parameters.
+
+* Electric field in the far-zone:
+
+$$
+  E_r \simeq 0
+$$
+
+$$
+  E_\theta \simeq j\eta_0 \frac{I_0}{2\pi} \left[ \frac{\cos\left(\frac{\pi}{2}\cos\theta \right)}{\sin\theta} \right] \frac{e^{-jkr}}{r}
+$$
+
+$$
+  E_\phi = 0
+$$
+
+* Radiation intensity:
+
+$$
+  U(\theta) = \eta_0 \frac{|I_0|^2}{8\pi^2} \left[\frac{\cos\left(\frac{\pi}{2}\cos\theta \right)}{\sin\theta}  \right]^2 \simeq \eta_0 \frac{|I_0|^2}{8\pi^2}\sin^3\theta
+$$
+
+![Three-dimensional antenna pattern for a half-wavelength dipole antenna from Balanis.](images/BalanisHalfWavelengthDipolePattern.png){#fig-half-wavelength-dipole-pattern}
+
+* Total radiated power:
+
+\begin{align}
+P_{\mathrm{rad}} &= \int_{0}^{2\pi} \int_{0}^{\pi} U(\theta) \sin\theta d\theta d\phi \\
+&= \eta_0\frac{|I_0|^2}{8\pi} \int_{0}^{2\pi} \frac{1-\cos y}{y} dy = \eta_0 \\
+&\simeq \eta_0 \frac{|I_0|^2}{8\pi} \times 2.435
+\end{align}
+
+* Maximum directivity: Since $U(\theta)$ is maximized for $\theta=\pi/2$, we have
+
+$$
+  D_{\mathrm{max}} = 4\pi \frac{U(\pi/2)}{P_{\mathrm{rad}}} \simeq \frac{4}{2.435} \simeq 1.643
+$$
+
+* Maximum effective area:
+
+$$
+  A_{e,\mathrm{max}} = \frac{\lambda^2}{4\pi} D_{\mathrm{max}} \simeq \frac{\lambda^2}{4\pi}(1.643) \simeq 0.13 \lambda ^2
+$$
+
+* Radiation resistance and impedance:
+
+$$
+  R_r = \frac{2 P_{\mathrm{rad}}}{|I_0|^2} \simeq \frac{\eta_0}{4\pi}(2.435) \simeq 73
+$$
+
+$$
+  Z_{\mathrm{in}} = 73 + j42.5
+$$
+
+To reduce the imaginary part of the impedance to zero, the antenna is matched or reduced in length until the reactance vanishes. The latter is most commonly used in practice for half-wavelength dipoles. Depending upon the radius of the wire, the length of the dipole for the first resonance is about $l=0.47 \lambda$ (for thicker wire) to $0.48 \lambda$ (for thinner wire).
+
+![Reactance of a half-wavelength dipole antenna from Balanis.](images/BalanisHalfWavelengthDipoleReactance.png){#fig-half-wavelength-dipole-reactance}
+
+## RF Link Budget
+
+Section Outline
+
+* Friis Transmission Equation
+
+* WiFi Example
+
+* Polarization Loss
+
+* Vertical-Circular Example
+
+### Friis Transmission Equation
+
+<!-- Following Balanis 2.17 -->
+
+The Friss transmission equation relates the power received to the power transmitted between two antennas that are separated by a distance $R > 2D^2/\lambda$, where $D$ is the largest dimension of either antenna. In other words, we focus on situations in which each antenna is in the far field of the other. The scenario is illustrated and parameterized in the figure below.
+
+![Friis model from Balanis.](images/BalanisFriisModel.png){#fig-friis-model}
+
+As usual, we consider a sinusoidal input signal with power $P_t$ and frequency $f$ applied to the terminals of the transmit antenna, so that the generated EM wave propagates with frequency $f$ and has wavelength $\lambda = c/f$.
+
+#### Polarization Matched Antennas
+
+For a non-isotropic transmitting antenna, the power density in the direction $(\theta_t,\phi_t)$ can be written as
+
+$$
+  W_t = \frac{P_t G_t(\theta_t,\phi_t)}{4\pi R^2} = e_t \frac{P_t D_t(\theta_t,\phi_t)}{4 \pi R^2}
+$$
+
+where $G_t(\theta_t,\phi_t)$ is the gain, $D_t(\theta_t,\phi_t)$ is the directivity, and $e_t$ is the efficiency of the antenna.
+
+The effective area of the receive antenna is
+
+$$
+  A_r = e_r D_r(\theta_r,\phi_r)\frac{\lambda^2}{4\pi}
+$$
+
+where $D_r(\theta_r,\phi_r)$ is the directivity and $e_r$ is the efficiency of the receive antenna. Assuming the antennas are polarization matched, the receive power is then
+
+\begin{align}
+P_r = A_r W_t &= e_r D_r(\theta_r,\phi_r)\frac{\lambda^2}{4\pi} W_t \\
+&= e_t e_r \frac{\lambda^2 D_t(\theta_t,\phi_t)D_r(\theta_r,\phi_r)P_t}{(4\pi R)^2} \\
+&= \frac{\lambda^2 G_t(\theta_t,\phi_t)G_r(\theta_r,\phi_r)P_t}{(4\pi R^2)}
+\end{align}
+
+The ratio of the received power to the transmit power is
+
+\begin{align}
+\frac{P_r}{P_t}
+&= \frac{\lambda^2 G_t(\theta_t,\phi_t)G_r(\theta_r,\phi_r)}{(4\pi R^2)} \\
+&= G_t(\theta_t,\phi_t)G_r(\theta_r,\phi_r)\left( \frac{\lambda}{4 \pi R} \right)^2 \\
+&= G_t(\theta_t,\phi_t)G_r(\theta_r,\phi_r)\left( \frac{c_0}{4 \pi f R} \right)^2
+\end{align}
+
+The last term is often referred to as the *(free-space) propagation loss*. Note that this loss increases as the square of the distance $R$ and / or the square of the frequency $f$.
+
+If we can point the antennas so that they present maximum gain toward each other, then the best case ratio becomes
+
+$$
+  \left( \frac{P_r}{P_t} \right)_{\mathrm{max}}
+= G_{t,\mathrm{max}} G_{r,\mathrm{max}} \left( \frac{c_0}{4 \pi f R} \right)^2
+$$
+
+#### Example
+
+WiFi devices supporting IEEE Standard 802.11 can operate in the 5 GHz Industrial, Scientific, and Measurement (ISM) band.
+
+(a) What is the free-space loss at a propagation distance of $50$ m?
+
+$$
+  L=\left( \frac{\lambda}{4 \pi R}\right)^2 = \left(\frac{c}{4\pi f R}\right)^2 \approx 
+\left(\frac{3\times 10^8\ \mathrm{m/s}}{4\pi (5\times 10^9\ \mathrm{Hz}) (50\ \mathrm{m})}\right)^2 \approx 9.119 \times 10^{-9} = -80.4\ \mathrm{dB}
+$$
+
+(b) If the recommended receive power level of WiFi is $-65\ \mathrm{dBm}$, and the nominal transmit power is $15\ \mathrm{dBm}$, what is the required product of antenna gains, assuming the antennas are polarization matched?
+
+$$
+  (G_t G_r)_{\mathrm{dB}} > -65\ \mathrm{dBm} -15\ \mathrm{dBm} - (-80.4\ \mathrm{dB}) = 0.4\ \mathrm{dB}
+$$
+
+(c) Since WiFi can also operate in the $2.4\ \mathrm{GHz}$ ISM band, would the received power be larger or smaller than at $5\ \mathrm{GHz}$ for the same antenna gains and distance?
+
+\begin{align}
+L_{2.4\ \mathrm{GHz}} &= \frac{(5\times 10^9\ \mathrm{Hz})^2}{(2.4\times 10^9\ \mathrm{Hz})^2} \cdot L_{5.0\ \mathrm{GHz}} \\
+&\approx 4.34 \cdot L_{5.0\ \mathrm{GHz}}
+\end{align}
+
+So there is about $6.4\ \mathrm{dB}$ *less* loss at $2.4\ \mathrm{GHz}$ that at $5.0\ \mathrm{GHz}$.
+
+#### Polarization Loss
+
+We observe from the above relationships that if the antennas are not pointing at each other in the direction of maximum directivity or gain, then the output received power will be less than the maximum possible.
+
+In fact, even if we point the antennas directly at each other with maximum directivity, there can be a loss due to polarization mismatch, which we call *polarization loss*.
+
+In the extreme case, if the transmit antenna is vertically polarized, and the receive antenna is horizonally polarized, the receive electric field will generate no current in the receive antenna, and the receive power is zero.
+
+Recall that we denoted the electric field as a complex-valued phasor vector. If we let $\mathbf{E}_t(\theta_t,\phi_t)\frac{e^{-jkr}}{r}$ and $\mathbf{E}_r(\theta_r,\phi_r)\frac{e^{-jkr}}{r}$ denote the electric field phasors for the transmit and receive patterns in the far field, respectively, the polarization loss factor is the normalized magnitude-square of the dot product, i.e.,
+
+$$
+  \left(\frac{|\mathbf{E}_t(\theta_t,\phi_t) \cdot \mathbf{E}_r(\theta_r,\phi_r)|}{\lVert \mathbf{E}_t(\theta_t,\phi_t) \rVert \lVert \mathbf{E}_r(\theta_r,\phi_r) \rVert}\right)^2
+$$
+
+In the case of the transmit antenna being vertically polarized and the receive antena being horizontally polarized, we have $|\mathbf{E}_t(\theta_t,\phi_t) \cdot \mathbf{E}_r(\theta_r,\phi_r)|=0$.
+
+More generally, the polarization loss is smallest if the two field phasors are co-linear, in which case the loss factor is $1$, or $0\ \mathrm{dB}$. For this case, we call the antennas *polarization matched*.
+
+#### Example
+
+Suppose a transmit antenna is vertically polarized, so that $E_{\theta,t}(\theta_t,\phi_t)=1$ normalized and $E_{\phi,t}(\theta_t,\phi_t)=0$.
+
+If the receive antenna is circularly polarized in the clockwise direction, we have 
+
+$$
+  |E_{\theta,r}(\theta_r,\phi_r)|=|E_{\phi,r}(\theta_r,\phi_r)|=1/\sqrt{2}
+$$
+
+normalized, and
+
+$$
+  \angle E_{\phi,r}(\theta_r,\phi_r) - \angle E_{\theta,r}(\theta_r,\phi_r) = +\pi/2
+$$ 
+
+for example.
+
+The polarization loss factor is then
+
+$$
+  \left|(1,0) \cdot \left(\frac{1}{\sqrt{2}},\frac{e^{j\pi/2}}{\sqrt{2}} \right) \right|^2 = \frac{1}{2}
+$$
+
+or $3\ \mathrm{dB}$.
+
+## Appendix: Vector Calculus Definitions
+
+Consider the vector $\mathbf{r}=(x,y,z)=(r,\theta,\phi)$ illustrated in the figure below.
+
+![Three-dimensional coordinate system in rectangular coordinates $(x,y,z)$ or spherical coordinates $(r,\theta,\phi)$.](images/Lec11-02.png){#fig-3d-coordinate-system}
+
+The angle $0 \le \theta \le \pi$ is called the *elevation angle*, and the angle $0 \le \phi \le 2\pi$ is called the *azimuth angle*.
+
+### Coordinate Transformations
+
+The transformation from rectangular to spherical coordinates is
+
+$$
+\begin{bmatrix}
+r \\
+\theta \\
+\phi
+\end{bmatrix}=
+\begin{bmatrix}
+\sin\theta \cos\phi & \sin\theta \sin\phi & \cos\theta \\
+\cos\theta \cos\phi & \cos\theta \sin\phi & -\sin\theta \\
+-\sin\phi & \cos\phi & 0
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+z
+\end{bmatrix}
+$$
+
+and the inverse orthogonal coordinate transformation from spherical to rectangular is
+
+$$
+\begin{bmatrix}
+x \\
+y \\
+z
+\end{bmatrix}=
+\begin{bmatrix}
+\sin\theta \cos\phi & \cos\theta \cos\phi & -\sin\phi \\
+\sin\theta \sin\phi & \cos\theta \sin\phi & \cos\phi \\
+\cos\theta & -\sin\theta & 0
+\end{bmatrix}
+\begin{bmatrix}
+r \\
+\theta \\
+\phi
+\end{bmatrix}
+$$
+
+Note that the transformation matrices are transposes of each other, i.e., they are orthogonal matrices.
+
+### Differential Operations in Rectangular Coordinates
+
+The *del* vector differential operator is defined as
+
+$$
+  \nabla = \left( \frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z} \right)
+$$
+
+so that the *divergence* is
+
+$$
+  \nabla \cdot \mathbf{A} = \frac{\partial A_x}{\partial x} + \frac{\partial A_y}{\partial y} + \frac{\partial A_z}{\partial z}
+$$
+
+the *curl* is
+
+$$
+  \nabla \times \mathbf{A} = 
+\left| \begin{matrix}
+(1,0,0) & (0,1,0) & (0,0,1) \\
+\frac{\partial}{\partial x} & \frac{\partial}{\partial y} & \frac{\partial}{\partial z} \\
+A_x & A_y & A_z
+\end{matrix} \right| = \left( \left(\frac{\partial A_z}{\partial y}-\frac{\partial A_y}{\partial z} \right), \left( \frac{\partial A_x}{\partial z}-\frac{\partial A_z}{\partial x}\right), \left( \frac{\partial A_y}{\partial x}-\frac{\partial A_z}{\partial y}\right) \right)
+$$
+
+and the *Laplacian* is
+
+$$
+  \nabla^2 = \nabla \cdot \nabla = \frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}
+$$
+
+### Differential Operations in Spherical Coordinates
+
+The *del* vector differential operator is defined as
+
+$$
+  \nabla = \left( \frac{\partial}{\partial r}, \frac{1}{r}\frac{\partial}{\partial \theta}, \frac{1}{r\sin\theta}\frac{\partial}{\partial \phi} \right)
+$$
+
+so that the *divergence* is
+
+$$
+  \nabla \cdot \mathbf{A} = \frac{1}{r^2} \frac{\partial}{\partial r}(r^2 A_r) + \frac{1}{r\sin\theta} \frac{\partial}{\partial \theta}(A_\theta \sin\theta) + \frac{1}{r\sin\theta} \frac{\partial A_{\phi}}{\partial \phi}
+$$
+
+the *curl* is
+
+$$
+  \nabla \times \mathbf{A} = 
+\left(  \frac{1}{r\sin\theta} \left[\frac{\partial}{\partial \theta}(A_{\phi}\sin\theta)-\frac{\partial A_{\theta}}{\partial \phi} \right], \frac{1}{r} \left[ \frac{1}{\sin\theta}\frac{\partial A_r}{\partial \phi}-\frac{\partial}{\partial r}(rA_\phi)\right], \frac{1}{r} \left[ \frac{\partial}{\partial r}(rA_{\theta})-\frac{\partial A_r}{\partial \theta}\right] \right)
+$$
+
+and the *Laplacian* is
+
+$$
+  \nabla^2 = \frac{1}{r^2} \frac{\partial}{\partial r}\left(r^2 \frac{\partial}{\partial r}\right)+\frac{1}{r^2\sin\theta}\frac{\partial}{\partial \theta}\left(\sin\theta \frac{\partial}{\partial \theta} \right) + \frac{1}{r^2\sin^2\theta}\frac{\partial^2}{\partial \phi^2}
+$$

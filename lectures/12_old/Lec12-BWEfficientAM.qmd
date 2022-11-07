@@ -1,0 +1,209 @@
+---
+title: "Lecture 12 - Bandwidth-Efficient AM"
+jupyter: python3
+---
+
+## Summary
+
+In this lecture, we will see how we can remove redundacies in AM modulation and
+demodulation processes.
+
+## Outline
+
+- Single Sideband
+
+- Quadrature Multiplexing
+
+## Single Sideband (SSB) AM Modulation
+
+### Motivation: Redundancy in the Sidebands for DSB-SC
+
+For DSB-SC, we have
+
+$$
+  s(t) = m(t)\cos(2\pi f_c t) \leftrightarrow S(f)=\frac{1}{2}[M(f-f_c) + M(f+f_c)]
+$$
+
+![01](images/Lec12-01.png)
+
+From this illustration, we see that each "sideband" is copied twice. Is that
+necessary?
+
+Can we instead recover from the following modulated signals?
+
+![02](images/Lec12-02.png)
+
+Note that these alternative modulated signals have passband bandwidth $B$
+instead of $2B$ for DSC-SC!
+
+If we carefully consider on DSC-SC demodulator, we see that it can be used to
+recover the message signal.
+
+![03](images/Lec12-03.png)
+
+### Analytic Signal Representation of SSB
+
+Let
+
+\begin{align} M*{+}(f) &:= M(f)u(f) \\ M*{-}(f) &:= M(f)u(-f) \end{align}
+
+where we define
+
+$$
+  u(f):=
+\begin{cases}
+1 & f > 0 \\
+\frac{1}{2} & f=0 \\
+0 & f < 0
+\end{cases}
+$$
+
+Then $M(f) = M_{+}(f) + M_{-}(f)$.
+
+Furthermore, if $m(t)$ is real-valued, we have $M_{+}(f)=M_{-}^*(-f)$ for
+$f\ge 0$, so it is clear that $M_{+}(f)$ (or $M_{-}(f)$) completely specifies
+$M(f)$.
+
+The signal $M_{+}(f)$ is called an _analytic signal_ that consists of only
+positive frequencies, and therefore $M_{+}(f)$ provides the _analytic signal
+representation_ of $M(f)$.
+
+Now
+
+\begin{align} S*\mathrm{USB}(f) &= M*{+}(f-f*c) + M*{-}(f+f*c) \\
+S*\mathrm{LSB}(f) &= M*{-}(f-f_c) + M*{+}(f+f_c) \end{align}
+
+The signal $S_{\mathrm{USB}}(f)$ is called the _upper sideband (USB)
+representation_ of $M(f)$, while $S_{\mathrm{LSB}}(f)$ is called the _lower
+sideband (LSB) representation_ of $m(t)$. Both representations are called
+_single sideband (SSB)_ representations of $M(f)$.
+
+**EXERCISE:** Verify that there are no other real-valued SSB representations of
+a real signal.
+
+Although intuitive in the frequency domain, the SSB representations are not
+particularly insightful in the time domain. In particular, the filter $u(f)$ is
+not realizable and needs to be approximated at the origin.
+
+### The Hilbert Transform
+
+Consider the LTI frequency response
+
+$$
+  H(f):=-j\mathrm{sgn}(f)=\begin{cases}
+e^{-j\pi/2} & f > 0 \\
+0 & f=0 \\
+e^{+j\pi/2} & f < 0
+\end{cases} \leftrightarrow h(t)=\frac{1}{\pi t}
+$$
+
+**TBD: Insert diagram of magnitude and phase responses**
+
+**Defintion:** The _Hilbert Trasnsform_ $x_h(t) \leftrightarrow X_h(f)$ of a
+signal $x(t) \leftrightarrow X(f)$ is the output of the LTI system with
+frequency respopnse $H(f)=-j\mathrm{sgn}(f)$ if $x(t)$ is the input.
+
+That is,
+
+$$
+  X_h(f) = -j\mathrm{sgn}(f)X(f) \leftrightarrow x_h(t) = \int_{-\infty}^{+\infty} \frac{x(\tau)}{\pi(t-\tau)} d\tau
+$$
+
+**Example:** The Hilbert Transform of $\cos(2\pi f_c t)$ is $-\sin(2\pi f_c t)$
+
+**Example:** The analytic signal $X_{+}(f)$ can be written in terms of the
+Hilbert Transform as follows
+
+$$
+  X_{+}(f) = \frac{1}{2}\left[X(f) + j X_h(f) \right]
+$$
+
+Similarly,
+
+$$
+  X_{-}(f) = \frac{1}{2}\left[X(f) - j X_h(f) \right]
+$$
+
+### Hilbert Transform Representation of SSB
+
+Applying the example above to $S_{\mathrm{USB}}(f)$, we have
+
+\begin{align} S*{\mathrm{USB}}(f) &= M*{+}(f-f*c) + M*{-}(f+f_c) \\ &=
+\frac{1}{2}\left[M(f-f_c)+jM_h(f-f_c) \right] +
+\frac{1}{2}\left[M(f+f_c)-jM_h(f+f_c) \right] \\ &=
+\frac{1}{2}\left[M(f-f_c)+M(f+f_c) \right] -
+\frac{1}{2j}\left[M_h(f-f_c)-M_h(f+f_c) \right] \end{align}
+
+so that
+
+$$
+  s_\mathrm{USB}(t) = m(t)\cos(2\pi f_c t) - m_h(t)\sin(2\pi f_c t)
+$$
+
+Similary, we have
+
+\begin{align} S*{\mathrm{LSB}}(f) &= M*{-}(f-f*c) + M*{+}(f+f_c) \\ &=
+\frac{1}{2}\left[M(f-f_c)-jM_h(f-f_c) \right] +
+\frac{1}{2}\left[M(f+f_c)+jM_h(f+f_c) \right] \\ &=
+\frac{1}{2}\left[M(f-f_c)+M(f+f_c) \right] +
+\frac{1}{2j}\left[M_h(f-f_c)-M_h(f+f_c) \right] \end{align}
+
+so that
+
+$$
+  s_\mathrm{LSB}(t) = m(t)\cos(2\pi f_c t) + m_h(t)\sin(2\pi f_c t)
+$$
+
+The take away is that, by modulating the right signal onto the sine of the same
+frequency as the cosine carrier signal, we elimninate the redundancy sidebands.
+
+## Quadrature
+
+With sine carrier signal also available to us, we can also consider mdulating
+two separate baseband signals. This technique is called _quadrature multiplexing
+(QM)_.
+
+### Quadrature Multiplexing
+
+Specifically, let $m(t)=m_{R}(t)+jm_{I}(t)$, where $m_{R}(t)$ and $m_{I}(t)$ are
+two baseband signals bandlimited to maximum frequency $B$.
+
+Now consider
+
+\begin{align} s*{\mathrm{QM}}(t) &= \mathrm{Re}\left\{m(t)e^{j2\pi f_c t}
+\right\} \\ &=\mathrm{Re}\left\{(m*{R}(t)+jm\_{I}(t))(\cos(2\pi f_c
+t)+j\sin(2\pi f_c t))\right\} \\ &= m_R(t)\cos(2\pi f_c t) - m_I(t)\sin(2\pi f_c
+t) \end{align}
+
+We see that we have **two** signal of baseband bandwidth $B$ now occupying the
+passband bandwidth of $2B$ for $s_{\mathrm{QM}}(t)$.
+
+![04](images/Lec12-04.png)
+
+## Quadrature Demultiplexing
+
+There are several ways to view recovery of $m(t)$ from $s_{\mathrm{QM}}(t)$.
+
+$$
+  s_{\mathrm{QM}}(t) = \frac{1}{2}\left[m(t)e^{j2\pi f_c t} + m^*(t) e^{-j2\pi f_c t} \right]
+$$
+
+so that
+
+$$
+  s_{\mathrm{QM}}(t)e^{-j2\pi f_c t} = \frac{1}{2}\left[m(t)+ m^*(t) e^{-j2\pi (2f_c) t} \right]
+$$
+
+The second term can be filtered out with a lowpass filter, so that we can
+recover $m(t)$ as shown in the figure below.
+
+![05](images/Lec12-05.png)
+
+A few comments are in order:
+
+- The cross terms $m_R(t)\sin(2\pi f_c t)\cos(2\pi f_c t)$ and
+  $m_I(t)\cos(2\pi f_c t)\sin(2\pi f_c t)$ are eliminated via filtering, so that
+  there is no interference between $m_R(t)$ and $m_I(t)$.
+
+- $m_R(t)\cos(2\pi f_c t)$ is called the _in-phase (I) component_, and
+  $m_I(t)\sin(2\pi f_c t)$ is called the _quadrature (Q) component_

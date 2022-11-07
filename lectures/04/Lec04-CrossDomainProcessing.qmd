@@ -1,0 +1,183 @@
+# Lecture 04 - Cross-Domain Processing
+
+Signals can be processed in both the continuous time (CT) and discrete time (DT) domains. 
+Oftentimes processing in one domain is more practical than the other, so some means of 
+conversion between them is required.
+
+In this lecture we will discuss the ways we model so-called "equivalent" systems and why
+they are so essential to communcations engineering.
+
+## Primitives
+
+Before formalizing the relationship between continuous and discrete time systems it is important to reinforce 
+several concepts that are necessary for our derivations. Nothing here should be new.
+
+### 1. Modulation by an Impulse Train
+
+A signal $x(t)$ can be modulated by a train of impulses spaced by $T_s$. The resulting signal $y(t)$ is 
+still continuous time despite its resemblance to a discrete time signal.
+
+$$
+\begin{aligned}
+y(t) = \sum_{n=-\infty}^{\infty}x(nT_s) \, \delta(t-nT_s)
+\; &\longleftrightarrow \;
+\mathbb{Y} (j \omega) = \frac{1}{T_s} \sum_{k=-\infty}^{\infty} \mathbb{X} (j (\omega - \tfrac{k2\pi}{T_s})) \\
+\; &\longleftrightarrow \;
+\mathbb{Y} (f) = \frac{1}{T_s} \sum_{k=-\infty}^{\infty} \mathbb{X} (f - \tfrac{k}{T_s}) \\
+\end{aligned}
+$$
+
+### 2. DT Sequence to CT Impulse Train
+
+![](./diagrams/impulse-train.svg){fig-align="center"}
+
+A discrete time sequence $x[n]$ can be converted to continuous time by multiplication with an impulse train.
+
+$$
+\begin{aligned}
+y(t) = \sum_{n=-\infty}^{\infty}x[n] \, \delta(t-nT_s)
+\; \; \; &\longleftrightarrow \; \; \;
+\mathbb{Y} (j \omega) = \mathbb{X} (e^{j \omega T_s}) \\
+\; \; \; &\longleftrightarrow \; \; \;
+\mathbb{X} (e^{j \omega}) = \mathbb{Y} (j \tfrac{\Omega}{T_s}) \\
+\end{aligned}
+$$
+
+### 3. Sampling
+
+![](./diagrams/sampling.svg){fig-align="center"}
+
+A continuous time signal can be sampled at some interval to produce a discrete time sequence.
+
+$$
+\begin{aligned}
+x[n] = y(nT_s)
+\; \; \; &\longleftrightarrow \; \; \;
+\mathbb{X} (e^{j \omega}) = \frac{1}{T_s} \sum_{k=-\infty}^{\infty} \mathbb{Y} (j (\tfrac{\Omega - k2\pi}{T_s})) \\
+\; \; \; &\longleftrightarrow \; \; \;
+\mathbb{X} (e^{2 \pi u}) = \frac{1}{T_s} \sum_{k=-\infty}^{\infty} \mathbb{Y} (\tfrac{u - k}{T_s}) \\
+\end{aligned}
+$$
+
+### 4. Interpolation with an LTI Filter $h(t)$
+
+![](./diagrams/interpolation.svg){fig-align="center"}
+
+A discrete time sequence can be converted back to a continuous time signal by application of a 
+sinc-interpolation filter.
+
+$$
+z(t) = \sum_{n=-\infty}^{\infty}x[n] \, h(t-nT_s)
+\; \; \; \longleftrightarrow \; \; \;
+\mathbb{Z} (j \omega) = \mathbb{H} (j \omega) \, \mathbb{X} (j \omega)
+$$
+
+Note that the resulting signal $z(t)$ is a sum of the input signal $x[n]$ times time-delayed versions 
+of the filter $h(t)$.
+
+## Continuous Time to Discrete Time (and back)
+
+We can convert a continuous time signal $x(t)$ to a discrete time signal $x[n]$ and then back to a 
+continuous time signal $\tilde{x} (t)$ with the following construction:
+
+![](./diagrams/sinc-interpolation.svg){fig-align="center"}
+
+If $x(t)$ is bandlimited to a maximum frequency $\omega_0$ and $\frac{2\pi}{T_s} > 2 \omega_0$, then $\tilde{x} (t) = x(t)$.
+
+Note: $x(t)$ and $\tilde{x} (t)$ are equal in the sense that 
+$\int_{-\infty}^{+\infty} | \tilde{x} (t) - x(t) |^2dt = 0$
+\- i.e., the energy of the error is $0$. This is not strictly the same as saying that 
+\- $x(t) = \tilde{x} (t)$ for all $t$.
+
+## Discrete Time Processing of Continuous Time Signals
+
+One important benefit of the above property is that we can do discrete time processing of continuous time signals.
+The block diagram below demonstrates such a system, where $g[n]$ is some discrete time filter used to process the
+signal. 
+
+This filter could be anything from a basic low-pass filter to a video codec - the idea is that we can use 
+discrete time techniques (computers) to process continous time signals.
+
+![](./diagrams/ct-equiv-dt-processing-boxed.svg){fig-align="center"}
+
+We can combine concepts from sampling (3), bandlimited interpolation (4), and the Fourier Transform property 
+$\mathbb{Y} (e^{j \Omega}) = \mathbb{G} (e^{j \Omega}) \mathbb{X} (e^{j \Omega})$ to find that:
+
+$$
+\mathbb{Y} (j \omega) =
+\begin{cases}
+    \mathbb{G} (e^{j \omega T_s}) \mathbb{X} (j \omega) & | \omega | < \frac{\pi}{T_s} \\
+    0 & \text{otherwise}
+\end{cases}
+$$
+
+Again looking at the figure, we see that the entire system behaves like an equivalent CT LTI system with
+
+$$
+\mathbb{G}_{eq} (j \omega) =
+\begin{cases}
+    \mathbb{G} (e^{j \omega T_s}) & | \omega | < \frac{\pi}{T_s} \\
+    0 & \text{otherwise}
+\end{cases}
+$$
+
+Despite the fact that the processing inside the box is in discrete time, the system as a whole is continuous time because it has a continuous time input and a continuous time output.
+
+Note: if $x(t)$ is not bandlimited or aliasing occurs, the relationship is more involved and the equivalent CT system is **not LTI**.
+
+## Discrete Time to Continuous Time (and back)
+
+![](./diagrams/dt-to-ct.svg){fig-align="center"}
+
+We can combine concepts from sampling (3) and bandlimited interpolation (4) to get 
+
+$$
+\tilde{x} [n] = x[n], \; n \in \mathbb{Z}
+$$
+
+Notice that $x(t)$ must **always** be bandlimited with max frequency less than $\frac{\pi}{T_s}$ so there can be no aliasing.
+
+## Continuous Time Processing of Discrete Time Signals
+
+![](./diagrams/dt-equiv-ct-processing.svg){fig-align="center"}
+
+We can combine concepts from sampling (3), bandlimited interpolation (4), and the property of the 
+Fourier Transform $\mathbb{Y} (j \omega) = \mathbb{G} (j \omega) \mathbb{X} (j \omega)$ to get
+
+$$
+\mathbb{Y} (e^{j \Omega}) = \mathbb{G} (j \tfrac{\Omega}{T_s}) \, \mathbb{X} (e^{j \Omega}) \; \; \; \text{for} \; | \Omega | < \pi
+$$
+
+Note that $\mathbb{Y} (e^{j \Omega})$ is periodic with period $2\pi$, i.e., the entire system behaves like an equivalent DT LTI system with
+
+$$
+\mathbb{G}_{eq} (e^{j \Omega}) = \sum_{k=-\infty}^\infty \tilde{\mathbb{G}} \left(j\left(\frac{\Omega - k2\pi}{T_s}\right)\right) 
+\text{ with } 
+
+\tilde{\mathbb{G}} = 
+\begin{cases}
+\mathbb{G} (j \omega) & | \omega | < \frac{\pi}{T_s} \\
+0 & \text{otherwise}
+\end{cases}
+$$
+
+or in the time domain
+
+$$
+g_{eq}[n] = \left(g(t) * \frac{\sin{\pi t / T_s}}{\pi t / T_s} \right) \bigg\rvert_{t=nT_s}
+$$
+
+Notice that the dashed box in the figure contains a discrete time equivalent system. This property is
+extremely important in communications because it allows abstracting away the continuous time details of 
+the real world (which are often necessary in communications - think radio waves, wires, etc.) so that 
+focus can be shifted to processing the (often) discrete time signal that is being transmitted and received.
+
+---
+
+NOTES FOR REVIEWERS:
+
+- still would like to include some examples in Python to help students get familiar with modelling
+  these systems. Perhaps figures for the primitives would be helpful?
+- need to brainstorm on exercises to include so that students can get some practice with math - 
+  particularly with regard to converting from CT to DT and how that imparts periodicity
+- surely some information or explanations have been missed here, please address any such issue
