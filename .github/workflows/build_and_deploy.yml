@@ -1,0 +1,54 @@
+name: Deploy Site
+
+on:
+  push:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Render Quarto Project
+        uses: quarto-dev/quarto-actions/render@v2
+          
+      - name: Create Site Artifact
+        shell: bash
+        run: |
+          cd _output
+          tar \
+            --dereference --hard-dereference \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git \
+            --exclude=.github \
+            .
+
+      - name: Upload Site Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar
+          
+  deploy:
+    needs: build
+    
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      pages: write
+    
+    environment:
+      name: github-pages
+    
+    steps:
+      - name: deploy to github pages
+        id: deployment
+        uses: actions/deploy-pages@v1
